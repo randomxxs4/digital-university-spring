@@ -17,7 +17,7 @@ public class DispatcherServletConfig {
     @Bean
     public ServletRegistrationBean dispatchServletRegistration() {
         ServletRegistrationBean registration = new ServletRegistrationBean(
-                dispatcherServlet(), "/api");
+                dispatcherServlet(), "/api/*");
         registration.setName(DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME);
         return registration;
     }

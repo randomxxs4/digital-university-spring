@@ -11,9 +11,9 @@ public class StudentCoverter implements Converter<Student, StudentDto> {
     public StudentDto convert(Student obj) throws ConvertException, ConvertException {
         StudentDto studentDto = new StudentDto();
         studentDto.setId(obj.getId().toString());
-        studentDto.setMiddleName(obj.getMiddlename());
-        studentDto.setName(obj.getName());
-        studentDto.setSurname(obj.getSurname());
+        studentDto.setMiddleName(obj.getUser().getMiddlename());
+        studentDto.setName(obj.getUser().getName());
+        studentDto.setSurname(obj.getUser().getSurname());
         studentDto.setStudentGroup(obj.getStudentGroup().getTitle());
         studentDto.setStudentSpeciality(obj.getStudentSpeciality().getTitle());
         return studentDto;
