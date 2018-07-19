@@ -10,11 +10,13 @@ import ru.digitaluniversity.dto.GroupDto;
 import ru.digitaluniversity.dto.JournalDto;
 import ru.digitaluniversity.entity.Group;
 import ru.digitaluniversity.entity.Journal;
+import ru.digitaluniversity.entity.Rating;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.ForbiddenException;
 import ru.digitaluniversity.exception.NotFoundException;
 import ru.digitaluniversity.exception.StreamConvertException;
 import ru.digitaluniversity.repository.JournalRepository;
+import ru.digitaluniversity.repository.RatingRepostitory;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +34,9 @@ public class JournalServiceImpl implements JournalService {
     @Autowired
     private Converter<Journal, JournalDto> converter;
 
+    @Autowired
+    private RatingRepostitory ratingRepostitory;
+
     @Override
     public Page<JournalDto> findByRole(Optional<Integer> page, Optional<Integer> size) throws Exception {
         return null;
@@ -43,8 +48,20 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
-    public JournalDto updateRating(Integer id, String rating) throws ForbiddenException {
-        return null;
+    public JournalDto updateRating(Integer id, String rating) throws ForbiddenException, NotFoundException, ConvertException {
+        Journal journal = journalRepository.findById(id).get();
+        if (journal != null){
+            Rating ratingObj = ratingRepostitory.findByRating(rating);
+            if (ratingObj != null){
+                journal.setJournalRating(ratingObj);
+                Journal savedJournal = journalRepository.save(journal);
+                return converter.convert(savedJournal);
+            } else {
+                throw new NotFoundException("Rating not found");
+            }
+        }else{
+            throw new NotFoundException("Journal not found");
+        }
     }
 
     @Override

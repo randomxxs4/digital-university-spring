@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.digitaluniversity.converter.Converter;
 import ru.digitaluniversity.dto.DayDto;
-import ru.digitaluniversity.dto.PositionDto;
 import ru.digitaluniversity.entity.Day;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
@@ -52,8 +51,7 @@ public class DayServiceImpl implements DayService {
         if (day != null) {
             DayDto dayDto = converter.convert(day);
             return dayDto;
-        }
-        else{
+        } else {
             throw new NotFoundException("Day not found");
         }
     }

@@ -13,8 +13,13 @@ public class UserRole implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String role;
-    @ManyToMany(mappedBy = "roles")
+
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private List<User> users;
+
+    public UserRole() {
+
+    }
 
     public Integer getId() {
         return id;
@@ -32,8 +37,12 @@ public class UserRole implements GrantedAuthority {
         this.role = role;
     }
 
-    public UserRole() {
+    public List<User> getUsers() {
+        return users;
+    }
 
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     @Override

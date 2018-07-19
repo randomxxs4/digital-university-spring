@@ -1,4 +1,4 @@
-package ru.digitaluniversity.security.entity;
+package ru.digitaluniversity.security.component;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import ru.digitaluniversity.entity.User;
@@ -17,8 +17,6 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
     }
 
     public AuthenticationToken(String token, User user) {
-        //note that the constructor needs a collection of GrantedAuthority
-        //but our User have a collection of our UserRole's
         super(user.getRoles());
 
         this.token = token;
@@ -28,12 +26,12 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getCredentials() {
-        return getToken();
+        return getUser().getPassword();
     }
 
     @Override
     public Object getPrincipal() {
-        return getUser();
+        return getUser().getUsername();
     }
 
     public String getToken() {

@@ -6,4 +6,5 @@ import ru.digitaluniversity.entity.Rating;
 
 @Repository
 public interface RatingRepostitory extends JpaRepository<Rating, Integer> {
+    Rating findByRating(String rating);
 }

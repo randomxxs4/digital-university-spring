@@ -14,7 +14,7 @@ public class User {
     private String username;
     private String password;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<UserRole> roles;
 
     private String surname;
@@ -100,4 +100,5 @@ public class User {
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
     }
+
 }
