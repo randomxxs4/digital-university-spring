@@ -18,4 +18,5 @@ import java.util.List;
 public interface JournalRepository extends JpaRepository<Journal, Integer> {
     Page<Journal> findByJournalStudent(Student student, Pageable pageable);
     Page<Journal> findByJournalTimetable(Timetable timetable, Pageable pageable);
+    Journal findByJournalTimetable(Timetable timetable);
 }
