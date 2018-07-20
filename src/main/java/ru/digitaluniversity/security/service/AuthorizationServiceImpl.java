@@ -23,8 +23,6 @@ import java.util.List;
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService{
 
-    public static final String TEACHER_ROLE = "roleteacher";
-    public static final String STUDENT_ROLE = "rolestudent";
     private static final Long TIME_5_MIN = 300000L;
 
     @Autowired
@@ -98,7 +96,7 @@ public class AuthorizationServiceImpl implements AuthorizationService{
         List<UserRole> roles = authenticationToken.getUser().getRoles();
         if (roles != null){
             for (int i = 0; i < roles.size(); i++) {
-                if (TEACHER_ROLE.equals(roles.get(i)) || STUDENT_ROLE.equals(roles.get(i))){
+                if (TEACHER_ROLE.equals(roles.get(i).getRole()) || STUDENT_ROLE.equals(roles.get(i).getRole())){
                     return roles.get(i).getRole();
                 }
             }

@@ -4,16 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.digitaluniversity.converter.Converter;
+import ru.digitaluniversity.dto.JournalDto;
 import ru.digitaluniversity.dto.TeacherDto;
 import ru.digitaluniversity.dto.TimetableDto;
-import ru.digitaluniversity.entity.Teacher;
-import ru.digitaluniversity.entity.Timetable;
+import ru.digitaluniversity.entity.*;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
+import ru.digitaluniversity.exception.NotLogInException;
 import ru.digitaluniversity.exception.StreamConvertException;
+import ru.digitaluniversity.repository.StudentRepository;
+import ru.digitaluniversity.repository.TeacherRepository;
 import ru.digitaluniversity.repository.TimetableRepository;
+import ru.digitaluniversity.security.component.AuthenticationToken;
+import ru.digitaluniversity.security.service.AuthorizationService;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,16 +37,55 @@ public class TimetableServiceImpl implements TimetableService {
     @Autowired
     private Converter<Timetable, TimetableDto> converter;
 
+    @Autowired
+    private AuthorizationService authorizationService;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
+
+
     @Override
     public Page<TimetableDto> findTimetableByRole(Optional<Integer> page, Optional<Integer> size) throws Exception {
-        return null;
+        PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
+        String userRole = authorizationService.getUserRole();
+        User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
+        if (user != null) {
+            if (AuthorizationService.STUDENT_ROLE.equals(userRole)) {
+                Student student = studentRepository.findByUser(user);
+                if (student != null) {
+                    Page<Timetable> timetablePage = timetableRepository.findByTimetableGroup(student.getStudentGroup(), pageRequest);
+                    List<TimetableDto> timetableDtoList = getStreamConvert(timetablePage);
+                    Page<TimetableDto> result = new PageImpl<>(timetableDtoList, pageRequest, timetablePage.getTotalElements());
+                    return result;
+                }
+            }
+            if (AuthorizationService.TEACHER_ROLE.equals(userRole)) {
+                Teacher teacher = teacherRepository.findByUser(user);
+                if (teacher != null) {
+                    Page<Timetable> timetablePage = timetableRepository.findByTimetableTeacher(teacher, pageRequest);
+                    List<TimetableDto> timetableDtoList = getStreamConvert(timetablePage);
+                    Page<TimetableDto> result = new PageImpl<>(timetableDtoList, pageRequest, timetablePage.getTotalElements());
+                    return result;
+                }
+            }
+        }
+        throw new NotLogInException();
     }
 
     @Override
     public Page<TimetableDto> findAll(Optional<Integer> page, Optional<Integer> size) {
-        PageRequest pageRequest = new PageRequest(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
+        PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
         Page<Timetable> allPages = timetableRepository.findAll(pageRequest);
-        List<TimetableDto> timetableDtoList = allPages.getContent().stream()
+        List<TimetableDto> timetableDtoList = getStreamConvert(allPages);
+        Page<TimetableDto> result = new PageImpl<>(timetableDtoList, pageRequest, allPages.getTotalElements());
+        return result;
+    }
+
+    private List<TimetableDto> getStreamConvert(Page<Timetable> allPages) {
+        return allPages.getContent().stream()
                 .map(timetable -> {
                     try {
                         return converter.convert(timetable);
@@ -49,8 +94,6 @@ public class TimetableServiceImpl implements TimetableService {
                         throw new StreamConvertException("Не удалось преобразовать Timetable в Dto");
                     }
                 }).collect(Collectors.toList());
-        Page<TimetableDto> result = new PageImpl<>(timetableDtoList, pageRequest, allPages.getTotalElements());
-        return result;
     }
 
     @Override
@@ -64,3 +107,4 @@ public class TimetableServiceImpl implements TimetableService {
         }
     }
 }
+
