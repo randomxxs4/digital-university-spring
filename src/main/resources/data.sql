@@ -62,6 +62,13 @@ INSERT INTO users_roles (users_id, roles_id) VALUES
   (1, 1),
   (2, 2);
 
+INSERT INTO teachers (id, position, user_id) VALUES
+  (1, 1, 1);
+
+INSERT INTO students (id, student_group_id, student_speciality_id, user_id) VALUES
+  (1, 1, 1, 2);
+
+
 INSERT INTO timetables (id, timetable_day_id, timetable_group_id, timetable_pair_id, timetable_subject_id, timetable_teacher_id)
 VALUES
   --   Иванов
@@ -77,3 +84,4 @@ INSERT INTO journals (id, date, rating, student, subject, timetable) VALUES
   (1, now()::date, 5, 1, 1, 1),
   (2, now()::date, 3, 1, 1, 5),
   (3, now()::date, 3, 1, 1, 2);
+

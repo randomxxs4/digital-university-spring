@@ -12,15 +12,13 @@ import ru.digitaluniversity.dto.GroupDto;
 import ru.digitaluniversity.dto.JournalDto;
 import ru.digitaluniversity.entity.*;
 import ru.digitaluniversity.exception.*;
-import ru.digitaluniversity.repository.JournalRepository;
-import ru.digitaluniversity.repository.RatingRepostitory;
-import ru.digitaluniversity.repository.StudentRepository;
-import ru.digitaluniversity.repository.TeacherRepository;
+import ru.digitaluniversity.repository.*;
 import ru.digitaluniversity.security.component.AuthenticationToken;
 import ru.digitaluniversity.security.service.AuthorizationService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service

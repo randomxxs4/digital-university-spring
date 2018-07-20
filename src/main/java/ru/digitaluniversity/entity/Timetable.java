@@ -1,6 +1,7 @@
 package ru.digitaluniversity.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "timetables")
