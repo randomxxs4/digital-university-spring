@@ -30,14 +30,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .csrf().disable()
+                .cors().and()
                 .authenticationProvider(authProvider)
                 .authorizeRequests()
 //                .antMatchers("/**").permitAll();
-                .antMatchers("/api/token/**").permitAll()
-                .antMatchers("/token").permitAll()
+                .antMatchers("/api/token/**").anonymous()
+                .antMatchers("/token").anonymous()
                 .antMatchers("/**").authenticated()
-                .and().anonymous().disable()
-                .exceptionHandling()
+                .and().exceptionHandling()
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
     }
 

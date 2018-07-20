@@ -18,6 +18,7 @@ public class WebMvcConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("*")
+                        .allowCredentials(true)
                         .allowedMethods("GET", "OPTIONS", "HEAD", "PUT", "POST", "PATCH", "DELETE")
                         .allowedHeaders("Content-Type", "api_key", "Authorization");
             }
