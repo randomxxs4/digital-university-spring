@@ -5,6 +5,9 @@ import ru.digitaluniversity.entity.User;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * The type Token.
+ */
 @Entity
 @Table(name = "tokens")
 public class Token {

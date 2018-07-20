@@ -91,7 +91,7 @@ public class TimetableServiceImpl implements TimetableService {
                         return converter.convert(timetable);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new StreamConvertException("Не удалось преобразовать Timetable в Dto");
+                        throw new StreamConvertException("Could not convert Timetable to Dto");
                     }
                 }).collect(Collectors.toList());
     }

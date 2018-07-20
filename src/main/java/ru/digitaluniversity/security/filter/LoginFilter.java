@@ -14,6 +14,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+/**
+ * The type Login filter.
+ */
 public class LoginFilter extends GenericFilterBean {
 
     private AuthorizationService authorizationService;

@@ -133,7 +133,7 @@ public class JournalServiceImpl implements JournalService {
                         return converter.convert(journal);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new StreamConvertException("�� ������� ������������� Journal � TJournalDto");
+                        throw new StreamConvertException("Could not convert Journal to Dto");
                     }
                 }).collect(Collectors.toList());
     }
@@ -153,7 +153,7 @@ public class JournalServiceImpl implements JournalService {
                         return converter.convert(journal);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new StreamConvertException("�� ������� ������������� Journal � TJournalDto");
+                        throw new StreamConvertException("Could not convert Journal to Dto");
                     }
                 }).collect(Collectors.toList());
         Page<JournalDto> result = new PageImpl<>(journalDtoList, pageable, journalDtoList.size());

@@ -3,6 +3,9 @@ package ru.digitaluniversity.security.component;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import ru.digitaluniversity.entity.User;
 
+/**
+ * The type Authentication token. Used in the authentication process
+ */
 public class AuthenticationToken extends AbstractAuthenticationToken {
 
     private String token;

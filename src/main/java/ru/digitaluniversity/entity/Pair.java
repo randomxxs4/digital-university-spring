@@ -2,6 +2,9 @@ package ru.digitaluniversity.entity;
 
 import javax.persistence.*;
 
+/**
+ * The type Pair.
+ */
 @Entity
 @Table(name = "pairs")
 public class Pair {

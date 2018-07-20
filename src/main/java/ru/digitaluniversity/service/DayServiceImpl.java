@@ -38,7 +38,7 @@ public class DayServiceImpl implements DayService {
                         return converter.convert(day);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new StreamConvertException("Не удалось преобразовать Day в Dto");
+                        throw new StreamConvertException("Could not convert Day to Dto");
                     }
                 }).collect(Collectors.toList());
         Page<DayDto> result = new PageImpl<>(dayDtoList, pageRequest, allPages.getTotalElements());

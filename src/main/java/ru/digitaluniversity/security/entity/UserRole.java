@@ -6,6 +6,9 @@ import ru.digitaluniversity.entity.User;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * The type User role.
+ */
 @Entity
 @Table(name = "roles")
 public class UserRole implements GrantedAuthority {

@@ -2,6 +2,9 @@ package ru.digitaluniversity.entity;
 
 import javax.persistence.*;
 
+/**
+ * The type Rating.
+ */
 @Entity
 @Table(name = "ratings")
 public class Rating {

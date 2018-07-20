@@ -3,6 +3,9 @@ package ru.digitaluniversity.entity;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * The type Speciality.
+ */
 @Entity
 @Table(name = "specialities")
 public class Speciality {

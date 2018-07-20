@@ -4,6 +4,9 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The type Subject.
+ */
 @Entity
 @Table(name = "subjects")
 public class Subject {

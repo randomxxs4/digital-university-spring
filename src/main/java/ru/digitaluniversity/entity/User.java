@@ -5,6 +5,9 @@ import ru.digitaluniversity.security.entity.UserRole;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * The type User.
+ */
 @Entity
 @Table(name = "users")
 public class User {

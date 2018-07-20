@@ -2,6 +2,9 @@ package ru.digitaluniversity.entity;
 
 import javax.persistence.*;
 
+/**
+ * The type Teacher.
+ */
 @Entity
 @Table(name = "teachers")
 public class Teacher{

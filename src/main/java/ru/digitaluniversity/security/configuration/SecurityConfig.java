@@ -11,6 +11,9 @@ import ru.digitaluniversity.security.filter.LoginFilter;
 import ru.digitaluniversity.security.service.AuthProvider;
 import ru.digitaluniversity.security.service.AuthorizationService;
 
+/**
+ * The type Security configuration.
+ */
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 

@@ -39,7 +39,7 @@ public class StudentServiceImpl implements StudentService {
                         return converter.convert(student);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new StreamConvertException("Не удалось преобразовать Student в Dto");
+                        throw new StreamConvertException("Could not convert Student to Dto");
                     }
                 }).collect(Collectors.toList());
         Page<StudentDto> result = new PageImpl<>(studentDtoList, pageRequest, allPages.getTotalElements());
