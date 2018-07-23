@@ -2,6 +2,9 @@ package ru.digitaluniversity.entity;
 
 import javax.persistence.*;
 
+/**
+ * The type Group.
+ */
 @Entity
 @Table(name = "groups")
 public class Group {

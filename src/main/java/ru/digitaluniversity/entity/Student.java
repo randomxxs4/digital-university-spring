@@ -2,18 +2,19 @@ package ru.digitaluniversity.entity;
 
 import javax.persistence.*;
 
+/**
+ * The type Student.
+ */
 @Entity
 @Table(name = "students")
-public class Student{
+public class Student {
+
+    @OneToOne
+    private User user;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
-    private String login;
-    private String password;
-    private String surname;
-    private String name;
-    private String middlename;
     @ManyToOne
     private Speciality studentSpeciality;
     @ManyToOne
@@ -22,28 +23,12 @@ public class Student{
     public Student() {
     }
 
-    public String getSurname() {
-        return surname;
+    public Integer getId() {
+        return id;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getMiddlename() {
-        return middlename;
-    }
-
-    public void setMiddlename(String middlename) {
-        this.middlename = middlename;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Speciality getStudentSpeciality() {
@@ -62,27 +47,12 @@ public class Student{
         this.studentGroup = studentGroup;
     }
 
-    public Integer getId() {
-        return id;
+    public User getUser() {
+        return user;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

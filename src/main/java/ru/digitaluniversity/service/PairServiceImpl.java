@@ -39,7 +39,7 @@ public class PairServiceImpl implements PairService {
                         return converter.convert(pair);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new StreamConvertException("Не удалось преобразовать Pair в Dto");
+                        throw new StreamConvertException("Could not convert Pair to Dto");
                     }
                 }).collect(Collectors.toList());
         Page<PairDto> result = new PageImpl<>(journalDtoList, pageRequest, allPages.getTotalElements());

@@ -3,6 +3,9 @@ package ru.digitaluniversity.entity;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * The type Journal.
+ */
 @Entity
 @Table(name = "journals")
 public class Journal {

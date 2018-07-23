@@ -41,7 +41,7 @@ public class SpecialityServiceImpl implements SpecialityService {
                         return converter.convert(speciality);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new StreamConvertException("Не удалось преобразовать Speciality в Dto");
+                        throw new StreamConvertException("Could not convert Speciality to Dto");
                     }
                 }).collect(Collectors.toList());
         Page<SpecialityDto> result = new PageImpl<>(specialityDtoList, pageRequest, allPages.getTotalElements());

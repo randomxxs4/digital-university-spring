@@ -1,7 +1,11 @@
 package ru.digitaluniversity.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
+/**
+ * The type Timetable.
+ */
 @Entity
 @Table(name = "timetables")
 public class Timetable {
@@ -18,8 +22,6 @@ public class Timetable {
     private Day timetableDay;
     @ManyToOne
     private Pair timetablePair;
-    @ManyToOne
-    private Journal timetableJournal;
 
     public Timetable() {
     }
@@ -70,13 +72,5 @@ public class Timetable {
 
     public void setTimetablePair(Pair timetablePair) {
         this.timetablePair = timetablePair;
-    }
-
-    public Journal getTimetableJournal() {
-        return timetableJournal;
-    }
-
-    public void setTimetableJournal(Journal timetableJournal) {
-        this.timetableJournal = timetableJournal;
     }
 }

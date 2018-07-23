@@ -15,7 +15,7 @@ public class TimetableConverter implements Converter<Timetable, TimetableDto> {
         timetableDto.setGroup(obj.getTimetableGroup().getTitle());
         timetableDto.setPair(obj.getTimetablePair().getNumber().toString());
         timetableDto.setSubject(obj.getTimetableSubject().getTitle());
-        timetableDto.setTeacher(obj.getTimetableTeacher().getSurname());
+        timetableDto.setTeacher(obj.getTimetableTeacher().getUser().getSurname());
         return timetableDto;
     }
 }

@@ -39,7 +39,7 @@ public class SubjectServiceImpl implements SubjectService {
                         return converter.convert(subject);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new StreamConvertException("Не удалось преобразовать Subject в Dto");
+                        throw new StreamConvertException("Could not convert Subject to Dto");
                     }
                 }).collect(Collectors.toList());
         Page<SubjectDto> result = new PageImpl<>(subjectDtoList, pageRequest, allPages.getTotalElements());

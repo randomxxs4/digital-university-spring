@@ -41,7 +41,7 @@ public class PositionServiceImpl implements PositionService {
                         return converter.convert(position);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new StreamConvertException("Не удалось преобразовать Position в Dto");
+                        throw new StreamConvertException("Could not convert Position to Dto");
                     }
                 }).collect(Collectors.toList());
         Page<PositionDto> result = new PageImpl<>(positionDtoList, pageRequest, allPages.getTotalElements());

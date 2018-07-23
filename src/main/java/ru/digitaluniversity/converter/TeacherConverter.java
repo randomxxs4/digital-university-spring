@@ -11,9 +11,9 @@ public class TeacherConverter implements Converter<Teacher, TeacherDto> {
     public TeacherDto convert(Teacher obj) throws ConvertException, ConvertException {
         TeacherDto teacherDto = new TeacherDto();
         teacherDto.setId(obj.getId().toString());
-        teacherDto.setMiddleName(obj.getMiddlename());
-        teacherDto.setName(obj.getName());
-        teacherDto.setSurname(obj.getSurname());
+        teacherDto.setMiddleName(obj.getUser().getMiddlename());
+        teacherDto.setName(obj.getUser().getName());
+        teacherDto.setSurname(obj.getUser().getSurname());
         teacherDto.setPosition(obj.getTeacherPosition().getTitle());
         return teacherDto;
     }

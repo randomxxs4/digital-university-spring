@@ -39,7 +39,7 @@ public class GroupServiceImpl implements GroupService {
                         return converter.convert(group);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new StreamConvertException("Не удалось преобразовать Group в Dto");
+                        throw new StreamConvertException("Could not convert Group to Dto");
                     }
                 }).collect(Collectors.toList());
         Page<GroupDto> result = new PageImpl<>(dayDtoList, pageRequest, allPages.getTotalElements());

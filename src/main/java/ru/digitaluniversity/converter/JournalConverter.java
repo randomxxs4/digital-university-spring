@@ -13,9 +13,9 @@ public class JournalConverter implements Converter<Journal, JournalDto>{
         journalDto.setId(obj.getId().toString());
         journalDto.setDate(obj.getJournalDate());
         journalDto.setRating(obj.getJournalRating().getRating());
-        journalDto.setStudent(obj.getJournalStudent().getSurname());
+        journalDto.setStudent(obj.getJournalStudent().getUser().getSurname());
         journalDto.setSubject(obj.getJournalSubject().getTitle());
-        journalDto.setTimetableTeacher(obj.getJournalTimetable().getTimetableTeacher().getSurname());
+        journalDto.setTimetableTeacher(obj.getJournalTimetable().getTimetableTeacher().getUser().getSurname());
         return journalDto;
     }
 }

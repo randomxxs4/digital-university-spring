@@ -39,7 +39,7 @@ public class RatingServiceImpl implements RatingService {
                         return converter.convert(rating);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new StreamConvertException("Не удалось преобразовать Rating в Dto");
+                        throw new StreamConvertException("Could not convert Rating to Dto");
                     }
                 }).collect(Collectors.toList());
         Page<RatingDto> result = new PageImpl<>(ratingDtoList, pageRequest, allPages.getTotalElements());

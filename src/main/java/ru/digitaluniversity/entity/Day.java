@@ -2,6 +2,9 @@ package ru.digitaluniversity.entity;
 
 import javax.persistence.*;
 
+/**
+ * The type Day.
+ */
 @Entity
 @Table(name = "days")
 public class Day {
