@@ -12,7 +12,7 @@ public class AlternativeStudentConverter implements Converter<Student, Alternati
     @Override
     public AlternativeStudentDto convert(Student obj) throws ConvertException, ConvertException {
         AlternativeStudentDto alternativeStudentDto = new AlternativeStudentDto();
-        if (obj != null){
+        if (obj != null) {
             alternativeStudentDto.setId(obj.getId().toString());
             alternativeStudentDto.setMiddlename(obj.getUser().getMiddlename());
             alternativeStudentDto.setName(obj.getUser().getName());

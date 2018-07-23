@@ -22,28 +22,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthorizationService authorizationService;
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.authenticationProvider(authProvider);
-//    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.addFilterBefore(loginFilter(), UsernamePasswordAuthenticationFilter.class);
-
         http
                 .csrf().disable()
                 .cors().and()
                 .authenticationProvider(authProvider)
                 .authorizeRequests()
-//                .antMatchers("/**").permitAll();
                 .antMatchers("/api/token/**").anonymous()
                 .antMatchers("/token").anonymous()
                 .antMatchers("/**").authenticated()
                 .and().exceptionHandling()
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
     }
-
 
     public LoginFilter loginFilter() {
         return new LoginFilter(authorizationService);

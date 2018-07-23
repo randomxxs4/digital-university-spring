@@ -40,9 +40,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public BasicInfoDto generateInfoByRole() throws NotFoundException {
         try {
-            String userRole = authorizationService.getUserRole();
             User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
             if (user != null) {
+                String userRole = authorizationService.getUserRole(user.getId());
                 if (AuthorizationService.STUDENT_ROLE.equals(userRole)) {
                     Student student = studentRepository.findByUser(user);
                     if (student != null) {

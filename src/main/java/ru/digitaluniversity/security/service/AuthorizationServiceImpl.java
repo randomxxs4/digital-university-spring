@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.digitaluniversity.entity.User;
 import ru.digitaluniversity.exception.NotLogInException;
 import ru.digitaluniversity.exception.TokenNotFoundException;
@@ -14,6 +16,7 @@ import ru.digitaluniversity.security.dto.TokenRequestData;
 import ru.digitaluniversity.security.component.AuthenticationToken;
 import ru.digitaluniversity.security.entity.Token;
 import ru.digitaluniversity.security.entity.UserRole;
+import ru.digitaluniversity.security.repository.RoleRepository;
 import ru.digitaluniversity.security.repository.TokenRepository;
 
 import javax.servlet.http.HttpSession;
@@ -34,6 +37,9 @@ public class AuthorizationServiceImpl implements AuthorizationService{
     @Autowired
     private AuthProvider authProvider;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Override
     public TokenDto generateToken(TokenRequestData requestData, HttpSession session) {
         User user = userRepository.findByUsername(requestData.getUsername());
@@ -53,7 +59,11 @@ public class AuthorizationServiceImpl implements AuthorizationService{
                 tokenDto.setTokenString(tokenString);
                 tokenDto.setExpirationDate(expirationDate);
                 tokenDto.setUserId(user.getUsername());
-                tokenDto.setUserRole(user.getRoles().get(0).getRole()); // TODO: 18.07.2018 исправить на нормальное получение роли
+                try {
+                    tokenDto.setUserRole(getUserRole(user.getId()));
+                } catch (UnsupportedRoleException e) {
+                    e.printStackTrace();
+                }
                 return tokenDto;
             }
         }
@@ -87,18 +97,26 @@ public class AuthorizationServiceImpl implements AuthorizationService{
 
     @Override
     public boolean hasRole(String role) throws Exception {
-        return false;
+        AuthenticationToken authenticationToken = (AuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
+        List<UserRole> roles = authenticationToken.getUser().getRoles();
+        UserRole byRole = roleRepository.findByRole(role);
+        if (roles != null && byRole != null) {
+            return roles.contains(byRole);
+        }
+        throw new UnsupportedRoleException();
     }
 
     @Override
-    public String getUserRole() throws UnsupportedRoleException {
-        AuthenticationToken authenticationToken = (AuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
-        List<UserRole> roles = authenticationToken.getUser().getRoles();
-        if (roles != null){
-            for (int i = 0; i < roles.size(); i++) {
-                if (TEACHER_ROLE.equals(roles.get(i).getRole()) || STUDENT_ROLE.equals(roles.get(i).getRole())){
-                    return roles.get(i).getRole();
-                }
+    public String getUserRole(Integer userId) throws UnsupportedRoleException {
+        User user = userRepository.findById(userId).get();
+        if (user != null) {
+            List<UserRole> roles = user.getRoles();
+            UserRole studentRole = roleRepository.findByRole(AuthorizationService.STUDENT_ROLE);
+            UserRole teacherRole = roleRepository.findByRole(AuthorizationService.TEACHER_ROLE);
+            if (roles.contains(teacherRole)) {
+                return AuthorizationService.TEACHER_ROLE;
+            } else if (roles.contains(studentRole)){
+                return AuthorizationService.STUDENT_ROLE;
             }
         }
         throw new UnsupportedRoleException();

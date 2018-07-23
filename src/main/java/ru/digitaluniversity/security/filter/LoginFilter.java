@@ -38,9 +38,6 @@ public class LoginFilter extends GenericFilterBean {
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }
-
-
-
             }
         } catch (TokenNotFoundException e) {
             e.printStackTrace();

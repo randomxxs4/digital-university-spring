@@ -50,9 +50,9 @@ public class TimetableServiceImpl implements TimetableService {
     @Override
     public Page<TimetableDto> findTimetableByRole(Optional<Integer> page, Optional<Integer> size) throws Exception {
         PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
-        String userRole = authorizationService.getUserRole();
         User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
         if (user != null) {
+            String userRole = authorizationService.getUserRole(user.getId());
             if (AuthorizationService.STUDENT_ROLE.equals(userRole)) {
                 Student student = studentRepository.findByUser(user);
                 if (student != null) {
