@@ -18,6 +18,7 @@ import ru.digitaluniversity.security.service.AuthorizationService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -108,7 +109,7 @@ public class JournalServiceImpl implements JournalService {
 
     @Override
     public Page<JournalDto> findAll(Optional<Integer> page, Optional<Integer> size) {
-        PageRequest pageRequest = new PageRequest(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
+        PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
         Page<Journal> allPages = journalRepository.findAll(pageRequest);
         List<JournalDto> journalDtoList = getStreamConvert(allPages);
         Page<JournalDto> result = new PageImpl<>(journalDtoList, pageRequest, allPages.getTotalElements());
@@ -139,7 +140,8 @@ public class JournalServiceImpl implements JournalService {
     }
 
     private Page<JournalDto> findByTimetableTeacher(Teacher teacher, Pageable pageable) {
-        List<Timetable> content = timetableRepository.findByTimetableTeacher(teacher, pageable).getContent();
+        Page<Timetable> pages = timetableRepository.findByTimetableTeacher(teacher, pageable);
+        List<Timetable> content = pages.getContent();
         List<Journal> journalList = new ArrayList<>();
         for (int i = 0; i < content.size(); i++) {
             Journal byJournalTimetable = journalRepository.findByJournalTimetable(content.get(i));
@@ -156,9 +158,7 @@ public class JournalServiceImpl implements JournalService {
                         throw new StreamConvertException("Could not convert Journal to Dto");
                     }
                 }).collect(Collectors.toList());
-        Page<JournalDto> result = new PageImpl<>(journalDtoList, pageable, journalDtoList.size());
+        Page<JournalDto> result = new PageImpl<>(journalDtoList, pageable, pages.getTotalElements());
         return result;
-
-
     }
 }

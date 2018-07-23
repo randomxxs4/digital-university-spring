@@ -54,19 +54,25 @@ INSERT INTO position_subject (position_id, subject_id) VALUES
   (2, 2),
   (3, 3);
 
-INSERT INTO users(id,middlename, name, password, surname, username) VALUES
+INSERT INTO users (id, middlename, name, password, surname, username) VALUES
   (1, 'Иванович', 'Иван', '123', 'Иванов', 'teacher'),
-  (2, 'Владимирович', 'Александр', '456', 'Малявский', 'student');
+  (2, 'Владимирович', 'Александр', '456', 'Малявский', 'student'),
+  (3, 'Дмитриевич', 'Дмитрий', '456', 'Дмитриев', 'student1'),
+  (4, 'Алексеевич', 'Юрий', '456', 'Гагарин', 'student2');
 
 INSERT INTO users_roles (users_id, roles_id) VALUES
   (1, 1),
-  (2, 2);
+  (2, 2),
+  (3, 2),
+  (4, 2);
 
 INSERT INTO teachers (id, position, user_id) VALUES
   (1, 1, 1);
 
 INSERT INTO students (id, student_group_id, student_speciality_id, user_id) VALUES
-  (1, 1, 1, 2);
+  (1, 1, 1, 2),
+  (2, 2, 2, 3),
+  (3, 3, 3, 4);
 
 
 INSERT INTO timetables (id, timetable_day_id, timetable_group_id, timetable_pair_id, timetable_subject_id, timetable_teacher_id)
@@ -81,7 +87,10 @@ VALUES
 
 INSERT INTO journals (id, date, rating, student, subject, timetable) VALUES
   --   Малявский математика
-  (1, now()::date, 5, 1, 1, 1),
-  (2, now()::date, 3, 1, 1, 5),
-  (3, now()::date, 3, 1, 1, 2);
+  (1, now() :: DATE, 5, 1, 1, 1),
+  (2, now() :: DATE, 3, 1, 1, 5),
+  (3, now() :: DATE, 3, 1, 1, 2),
+  (4, now() :: DATE, 5, 2, 1, 3),
+  (5, now() :: DATE, 5, 3, 1, 4),
+  (6, now() :: DATE, 5, 3, 1, 6);
 
