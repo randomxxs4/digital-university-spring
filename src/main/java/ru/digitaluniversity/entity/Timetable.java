@@ -22,6 +22,8 @@ public class Timetable {
     private Day timetableDay;
     @ManyToOne
     private Pair timetablePair;
+    @OneToMany(mappedBy = "journalTimetable")
+    private List<Journal> timetableJournal;
 
     public Timetable() {
     }
@@ -72,5 +74,13 @@ public class Timetable {
 
     public void setTimetablePair(Pair timetablePair) {
         this.timetablePair = timetablePair;
+    }
+
+    public List<Journal> getTimetableJournal() {
+        return timetableJournal;
+    }
+
+    public void setTimetableJournal(List<Journal> timetableJournal) {
+        this.timetableJournal = timetableJournal;
     }
 }

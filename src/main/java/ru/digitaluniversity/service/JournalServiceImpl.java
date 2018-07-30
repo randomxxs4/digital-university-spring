@@ -18,7 +18,6 @@ import ru.digitaluniversity.security.service.AuthorizationService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,7 +65,7 @@ public class JournalServiceImpl implements JournalService {
             if (AuthorizationService.TEACHER_ROLE.equals(userRole)) {
                 Teacher teacher = teacherRepository.findByUser(user);
                 if (teacher != null) {
-                    return findByTimetableTeacher(teacher, pageRequest);
+                    return findByTeacher(teacher, pageRequest);
                 }
             }
         }
@@ -149,7 +148,24 @@ public class JournalServiceImpl implements JournalService {
                 journalList.add(byJournalTimetable);
             }
         }
-        List<JournalDto> journalDtoList = journalList.stream()
+        List<JournalDto> journalDtoList = getJournalDtos(journalList);
+        Page<JournalDto> result = new PageImpl<>(journalDtoList, pageable, pages.getTotalElements());
+        return result;
+    }
+
+    private Page<JournalDto> findByTeacher(Teacher teacher, Pageable pageable) {
+        Page<Timetable> byTimetableTeacher = timetableRepository.findByTimetableTeacher(teacher, pageable);
+        List<Timetable> content = byTimetableTeacher.getContent();
+        List<JournalDto> journalDtoList = new ArrayList<>();
+        for (int i = 0; i < content.size(); i++) {
+            List<Journal> timetableJournals = content.get(i).getTimetableJournal();
+            journalDtoList.addAll(getJournalDtos(timetableJournals));
+        }
+        return new PageImpl<>(journalDtoList, pageable, byTimetableTeacher.getTotalElements());
+    }
+
+    private List<JournalDto> getJournalDtos(List<Journal> journalList) {
+        return journalList.stream()
                 .map(journal -> {
                     try {
                         return converter.convert(journal);
@@ -158,7 +174,5 @@ public class JournalServiceImpl implements JournalService {
                         throw new StreamConvertException("Could not convert Journal to Dto");
                     }
                 }).collect(Collectors.toList());
-        Page<JournalDto> result = new PageImpl<>(journalDtoList, pageable, pages.getTotalElements());
-        return result;
     }
 }
