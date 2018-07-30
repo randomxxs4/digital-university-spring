@@ -6,48 +6,55 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.digitaluniversity.entity.Journal;
-import ru.digitaluniversity.entity.Rating;
-import ru.digitaluniversity.entity.Student;
-import ru.digitaluniversity.entity.Subject;
+import org.springframework.transaction.annotation.Transactional;
+import ru.digitaluniversity.SpringUniversityApplicationTests;
+import ru.digitaluniversity.entity.*;
 
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(SpringRunner.class)
-@DataJpaTest
-public class JournalRepositoryTest {
-
-    @Autowired
-    private TestEntityManager entityManager;
+@Transactional
+public class JournalRepositoryTest extends SpringUniversityApplicationTests {
 
     @Autowired
     private JournalRepository journalRepository;
 
+    @Autowired
+    private SubjectRepository subjectRepository;
+
+    @Autowired
+    private RatingRepostitory ratingRepostitory;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private TimetableRepository timetableRepository;
+
     @Test
     public void testGet() {
-//        Subject subject = new Subject();
-//        subject.setId(10);
-//        subject.setTitle("Matem");
-//
-//        Rating rating = new Rating();
-//        rating.setId(10);
-//        rating.setRating("10");
-//
-//        Student student = new Student();
-//        student.setId(10);
-//        student.setStudentGroup();
-//
-//        Journal journal = new Journal();
-//        journal.setId(10);
-//        journal.setJournalSubject(subject);
-//        journal.setJournalStudent();
-//        journal.setJournalDate(new Date());
-//        journal.setJournalRating();
-//        journal.setJournalTimetable();
-//
-//        assertEquals("Малявский", journal.getJournalStudent().getUser().getSurname());
+        Journal journal = journalRepository.findById(211).get();
+        assertEquals("Малявский", journal.getJournalStudent().getUser().getSurname());
+    }
+
+    @Test
+    public void testSave() {
+        Student student = studentRepository.findById(191).get();
+        Rating rating = ratingRepostitory.findById(145).get();
+        Timetable timetable = timetableRepository.findById(201).get();
+        Subject subject = subjectRepository.findById(171).get();
+        Journal journal = new Journal();
+        journal.setJournalTimetable(timetable);
+        journal.setJournalRating(rating);
+        journal.setJournalDate(new Date());
+        journal.setJournalStudent(student);
+        journal.setJournalSubject(subject);
+
+        Journal savedJournal = journalRepository.save(journal);
+
+        Journal journalFromRepos = journalRepository.findById(savedJournal.getId()).get();
+        assertEquals(savedJournal, journalFromRepos);
     }
 
 }

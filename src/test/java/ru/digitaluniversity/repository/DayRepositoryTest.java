@@ -1,35 +1,35 @@
 package ru.digitaluniversity.repository;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+import ru.digitaluniversity.SpringUniversityApplicationTests;
 import ru.digitaluniversity.entity.Day;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-@RunWith(SpringRunner.class)
-@DataJpaTest
-public class DayRepositoryTest {
+@Transactional
+public class DayRepositoryTest extends SpringUniversityApplicationTests {
 
     @Autowired
     private DayRepository dayRepository;
 
-    @Autowired
-    private TestEntityManager entityManager;
+    @Test
+    public void testGet() {
+        Day dayById = dayRepository.findById(101).get();
+        assertEquals("Понедельник", dayById.getDay());
+    }
 
     @Test
-    public void testGet(){
+
+    public void testSave(){
         Day day = new Day();
-        day.setId(10);
-        day.setDay("Десятый");
+        day.setId(new Integer(108));
+        day.setDay("Восьмойденьнедели");
+        Day savedDay = dayRepository.save(day);
 
-        Day persist = entityManager.persist(day);
-
-        Day dayById = dayRepository.findById(1).get();
-        assertEquals(persist.getDay(), dayById.getDay());
+        Day dayFromRepos = dayRepository.findById(savedDay.getId()).get();
+        assertEquals(savedDay, dayFromRepos);
 
     }
 }
