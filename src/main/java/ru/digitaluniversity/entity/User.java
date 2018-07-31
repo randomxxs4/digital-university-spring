@@ -1,5 +1,6 @@
 package ru.digitaluniversity.entity;
 
+
 import ru.digitaluniversity.security.entity.UserRole;
 
 import javax.persistence.*;
@@ -26,7 +27,7 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     private Teacher teacher;
-    @OneToOne(mappedBy="user")
+    @OneToOne(mappedBy = "user")
     private Student student;
 
     public User() {

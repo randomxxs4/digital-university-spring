@@ -66,7 +66,6 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public AlternativeStudentDto generateStudentInfo(Integer id) throws Exception {
-
         Student student = studentRepository.findById(id).get();
         if (student != null) {
             AlternativeStudentDto studentDto = studentDtoConverter.convert(student);

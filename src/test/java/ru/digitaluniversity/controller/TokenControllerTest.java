@@ -1,64 +1,95 @@
 package ru.digitaluniversity.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import ru.digitaluniversity.SpringUniversityApplication;
-import ru.digitaluniversity.configuration.DispatcherServletConfig;
-import ru.digitaluniversity.configuration.WebMvcConfig;
-import ru.digitaluniversity.security.configuration.SecurityConfig;
+import org.springframework.transaction.annotation.Transactional;
+import ru.digitaluniversity.SpringUniversityApplicationTests;
 import ru.digitaluniversity.security.controller.TokenController;
+import ru.digitaluniversity.security.dto.TokenDto;
 import ru.digitaluniversity.security.dto.TokenRequestData;
+import ru.digitaluniversity.security.entity.Token;
+import ru.digitaluniversity.security.repository.TokenRepository;
 import ru.digitaluniversity.security.service.AuthorizationService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.junit.Assert.*;
 
-//@SpringBootTest
-@RunWith(SpringRunner.class)
-@WebMvcTest(TokenController.class)
-//@ContextConfiguration(classes = SpringUniversityApplication.class)
-//@ContextConfiguration(classes = {DispatcherServletConfig.class, WebMvcConfig.class, SecurityConfig.class})
-public class TokenControllerTest {
+@AutoConfigureMockMvc
+public class TokenControllerTest extends SpringUniversityApplicationTests {
+
+    private static final String BASE_URL = "/token";
 
     @Autowired
     private MockMvc mvc;
 
-    @MockBean
+    @Autowired
     private AuthorizationService authorizationService;
 
     @InjectMocks
     private TokenController tokenController;
 
+    @Autowired
+    private TokenRepository tokenRepository;
+
     @Test
-    public void testGenerateToken() throws Exception {
+    public void testGenerateTokenToTeacher() throws Exception {
 
         TokenRequestData tokenRequestData = new TokenRequestData();
         tokenRequestData.setUsername("teacher");
         tokenRequestData.setPassword("123");
 
-        MockHttpServletResponse requestData = mvc.perform(post("http://localhost:8081/api/token")
-                .accept(MediaType.APPLICATION_JSON)
-                .requestAttr("requestData", tokenRequestData))
-                .andReturn().getResponse();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
+        String requestJson = objectWriter.writeValueAsString(tokenRequestData);
 
-        String contentAsString = requestData.getContentAsString();
+        String contentAsString = mvc.perform(post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(tokenRequestData.getUsername())))
+                .andReturn().getResponse().getContentAsString();
+
+        TokenDto tokenDto = objectMapper.readValue(contentAsString, TokenDto.class);
+        Token byTokenString = tokenRepository.findByTokenString(tokenDto.getTokenString());
+        assertNotNull(byTokenString);
+    }
+
+    @Test
+    public void testGenerateTokenToStudent() throws Exception {
+
+        TokenRequestData tokenRequestData = new TokenRequestData();
+        tokenRequestData.setUsername("student");
+        tokenRequestData.setPassword("456");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
+        String requestJson = objectWriter.writeValueAsString(tokenRequestData);
+
+        String contentAsString = mvc.perform(post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(tokenRequestData.getUsername())))
+                .andReturn().getResponse().getContentAsString();
+
+        TokenDto tokenDto = objectMapper.readValue(contentAsString, TokenDto.class);
+        Token byTokenString = tokenRepository.findByTokenString(tokenDto.getTokenString());
+        assertNotNull(byTokenString);
     }
 }

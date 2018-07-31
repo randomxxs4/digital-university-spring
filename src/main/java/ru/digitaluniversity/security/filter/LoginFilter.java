@@ -32,12 +32,10 @@ public class LoginFilter extends GenericFilterBean {
             String authorizationHeader = ((HttpServletRequest) servletRequest).getHeader("Authorization");
             if (authorizationHeader != null) {
                 String tokenString = authorizationHeader.substring("Bearer ".length());
-                if (StringUtils.hasText(tokenString)) {
                     if (this.authorizationService.checkToken(tokenString)) {
                         Authentication authentication = this.authorizationService.getAuthentication(tokenString);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
-                }
             }
         } catch (TokenNotFoundException e) {
             e.printStackTrace();
