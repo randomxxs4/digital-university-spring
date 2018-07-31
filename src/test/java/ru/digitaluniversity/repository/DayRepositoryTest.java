@@ -21,7 +21,6 @@ public class DayRepositoryTest extends SpringUniversityApplicationTests {
     }
 
     @Test
-
     public void testSave() {
         Day day = new Day();
         day.setId(new Integer(108));

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.digitaluniversity.SpringUniversityApplicationTests;
 import ru.digitaluniversity.entity.User;
 import ru.digitaluniversity.security.entity.Token;
-import ru.digitaluniversity.security.repository.RoleRepository;
 import ru.digitaluniversity.security.repository.TokenRepository;
 
 import java.util.Date;

@@ -33,7 +33,6 @@ public class UserInfoControllerTest extends SpringUniversityApplicationTests {
                 .andDo(print())
                 .andExpect(status().isOk());
 
-
         mvc.perform(get(BASE_URL)
                 .header("Authorization", "Bearer TOKEN2"))
                 .andDo(print())
