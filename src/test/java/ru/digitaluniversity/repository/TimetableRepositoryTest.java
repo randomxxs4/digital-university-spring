@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.digitaluniversity.SpringUniversityApplicationTests;
 import ru.digitaluniversity.entity.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @Transactional
 public class TimetableRepositoryTest extends SpringUniversityApplicationTests {

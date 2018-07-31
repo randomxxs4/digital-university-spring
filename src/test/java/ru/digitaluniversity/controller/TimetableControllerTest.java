@@ -6,11 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.digitaluniversity.SpringUniversityApplicationTests;
-import ru.digitaluniversity.contollers.JournalController;
 import ru.digitaluniversity.contollers.TimetableController;
-import ru.digitaluniversity.repository.JournalRepository;
 import ru.digitaluniversity.repository.TimetableRepository;
-import ru.digitaluniversity.service.JournalService;
 import ru.digitaluniversity.service.TimetableService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
