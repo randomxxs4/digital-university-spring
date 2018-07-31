@@ -98,13 +98,9 @@ public class TimetableServiceImpl implements TimetableService {
 
     @Override
     public TimetableDto findById(Integer id) throws ConvertException, NotFoundException {
-        Timetable timetable = timetableRepository.findById(id).get();
-        if (timetable != null) {
-            TimetableDto timetableDto = converter.convert(timetable);
-            return timetableDto;
-        } else {
-            throw new NotFoundException("Timetable not found");
-        }
+        Timetable timetable = timetableRepository.findById(id).orElseThrow(NotFoundException::new);
+        TimetableDto timetableDto = converter.convert(timetable);
+        return timetableDto;
     }
 }
 

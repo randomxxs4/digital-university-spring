@@ -18,7 +18,6 @@ import ru.digitaluniversity.security.service.AuthorizationService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,7 +65,7 @@ public class JournalServiceImpl implements JournalService {
             if (AuthorizationService.TEACHER_ROLE.equals(userRole)) {
                 Teacher teacher = teacherRepository.findByUser(user);
                 if (teacher != null) {
-                    return findByTimetableTeacher(teacher, pageRequest);
+                    return findByTeacher(teacher, pageRequest);
                 }
             }
         }
@@ -77,34 +76,41 @@ public class JournalServiceImpl implements JournalService {
     public Page<JournalDto> findByRoleAndTimetable(Optional<Integer> page, Optional<Integer> size, Integer timetableId) throws Exception {
         PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
         User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
-        Timetable timetable = timetableRepository.findById(timetableId).get();
-        if (user != null && timetable != null) {
-            String userRole = authorizationService.getUserRole(user.getId());
-            if (AuthorizationService.STUDENT_ROLE.equals(userRole) || AuthorizationService.TEACHER_ROLE.equals(userRole)) {
-                Page<Journal> journalPage = journalRepository.findByJournalTimetable(timetable, pageRequest);
-                List<JournalDto> journalDtoList = getStreamConvert(journalPage);
-                Page<JournalDto> result = new PageImpl<>(journalDtoList, pageRequest, journalPage.getTotalElements());
-                return result;
-            }
+        if (user != null) {
+            Timetable timetable = timetableRepository.findById(timetableId).orElseThrow(NotFoundException :: new);
+                String userRole = authorizationService.getUserRole(user.getId());
+                if (AuthorizationService.STUDENT_ROLE.equals(userRole) || AuthorizationService.TEACHER_ROLE.equals(userRole)) {
+                    Page<Journal> journalPage = journalRepository.findByJournalTimetable(timetable, pageRequest);
+                    List<JournalDto> journalDtoList = getStreamConvert(journalPage);
+                    Page<JournalDto> result = new PageImpl<>(journalDtoList, pageRequest, journalPage.getTotalElements());
+                    return result;
+                }
         }
         throw new NotLogInException();
     }
 
     @Override
-    public JournalDto updateRating(Integer id, String rating) throws ForbiddenException, NotFoundException, ConvertException {
-        Journal journal = journalRepository.findById(id).get();
-        if (journal != null) {
-            Rating ratingObj = ratingRepostitory.findByRating(rating);
-            if (ratingObj != null) {
-                journal.setJournalRating(ratingObj);
-                Journal savedJournal = journalRepository.save(journal);
-                return converter.convert(savedJournal);
+    public JournalDto updateRating(Integer id, String rating) throws ForbiddenException, NotFoundException, ConvertException, UnsupportedRoleException {
+        User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
+        if (user != null) {
+            String userRole = authorizationService.getUserRole(user.getId());
+            if (AuthorizationService.TEACHER_ROLE.equals(userRole)) {
+                Journal journal = journalRepository.findById(id).get();
+                if (journal != null) {
+                    Rating ratingObj = ratingRepostitory.findByRating(rating);
+                    if (ratingObj != null) {
+                        journal.setJournalRating(ratingObj);
+                        Journal savedJournal = journalRepository.save(journal);
+                        return converter.convert(savedJournal);
+                    } else {
+                        throw new NotFoundException("Rating not found");
+                    }
+                }
             } else {
-                throw new NotFoundException("Rating not found");
+                throw new UnsupportedRoleException();
             }
-        } else {
-            throw new NotFoundException("Journal not found");
         }
+        throw new NotLogInException("Journal not found");
     }
 
     @Override
@@ -139,17 +145,19 @@ public class JournalServiceImpl implements JournalService {
                 }).collect(Collectors.toList());
     }
 
-    private Page<JournalDto> findByTimetableTeacher(Teacher teacher, Pageable pageable) {
-        Page<Timetable> pages = timetableRepository.findByTimetableTeacher(teacher, pageable);
-        List<Timetable> content = pages.getContent();
-        List<Journal> journalList = new ArrayList<>();
+    private Page<JournalDto> findByTeacher(Teacher teacher, Pageable pageable) {
+        Page<Timetable> byTimetableTeacher = timetableRepository.findByTimetableTeacher(teacher, pageable);
+        List<Timetable> content = byTimetableTeacher.getContent();
+        List<JournalDto> journalDtoList = new ArrayList<>();
         for (int i = 0; i < content.size(); i++) {
-            Journal byJournalTimetable = journalRepository.findByJournalTimetable(content.get(i));
-            if (byJournalTimetable != null) {
-                journalList.add(byJournalTimetable);
-            }
+            List<Journal> timetableJournals = content.get(i).getTimetableJournal();
+            journalDtoList.addAll(getJournalDtos(timetableJournals));
         }
-        List<JournalDto> journalDtoList = journalList.stream()
+        return new PageImpl<>(journalDtoList, pageable, byTimetableTeacher.getTotalElements());
+    }
+
+    private List<JournalDto> getJournalDtos(List<Journal> journalList) {
+        return journalList.stream()
                 .map(journal -> {
                     try {
                         return converter.convert(journal);
@@ -158,7 +166,5 @@ public class JournalServiceImpl implements JournalService {
                         throw new StreamConvertException("Could not convert Journal to Dto");
                     }
                 }).collect(Collectors.toList());
-        Page<JournalDto> result = new PageImpl<>(journalDtoList, pageable, pages.getTotalElements());
-        return result;
     }
 }
