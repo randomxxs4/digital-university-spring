@@ -145,21 +145,6 @@ public class JournalServiceImpl implements JournalService {
                 }).collect(Collectors.toList());
     }
 
-    private Page<JournalDto> findByTimetableTeacher(Teacher teacher, Pageable pageable) {
-        Page<Timetable> pages = timetableRepository.findByTimetableTeacher(teacher, pageable);
-        List<Timetable> content = pages.getContent();
-        List<Journal> journalList = new ArrayList<>();
-        for (int i = 0; i < content.size(); i++) {
-            Journal byJournalTimetable = journalRepository.findByJournalTimetable(content.get(i));
-            if (byJournalTimetable != null) {
-                journalList.add(byJournalTimetable);
-            }
-        }
-        List<JournalDto> journalDtoList = getJournalDtos(journalList);
-        Page<JournalDto> result = new PageImpl<>(journalDtoList, pageable, pages.getTotalElements());
-        return result;
-    }
-
     private Page<JournalDto> findByTeacher(Teacher teacher, Pageable pageable) {
         Page<Timetable> byTimetableTeacher = timetableRepository.findByTimetableTeacher(teacher, pageable);
         List<Timetable> content = byTimetableTeacher.getContent();

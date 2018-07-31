@@ -41,7 +41,7 @@ public class AuthorizationServiceImpl implements AuthorizationService{
     private RoleRepository roleRepository;
 
     @Override
-    public TokenDto generateToken(TokenRequestData requestData, HttpSession session) {
+    public TokenDto generateToken(TokenRequestData requestData, HttpSession session) throws UnsupportedRoleException {
         User user = userRepository.findByUsername(requestData.getUsername());
         if (user != null){
             if (user.getPassword().equals(requestData.getPassword())){
@@ -59,11 +59,7 @@ public class AuthorizationServiceImpl implements AuthorizationService{
                 tokenDto.setTokenString(tokenString);
                 tokenDto.setExpirationDate(expirationDate);
                 tokenDto.setUserId(user.getUsername());
-                try {
-                    tokenDto.setUserRole(getUserRole(user.getId()));
-                } catch (UnsupportedRoleException e) {
-                    e.printStackTrace();
-                }
+                tokenDto.setUserRole(getUserRole(user.getId()));
                 return tokenDto;
             }
         }

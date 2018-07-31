@@ -92,4 +92,43 @@ public class TokenControllerTest extends SpringUniversityApplicationTests {
         Token byTokenString = tokenRepository.findByTokenString(tokenDto.getTokenString());
         assertNotNull(byTokenString);
     }
+
+    @Test
+    public void testGenerateTokenToUser() throws Exception {
+
+        TokenRequestData tokenRequestData = new TokenRequestData();
+        tokenRequestData.setUsername("user");
+        tokenRequestData.setPassword("111");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
+        String requestJson = objectWriter.writeValueAsString(tokenRequestData);
+
+        mvc.perform(post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testGenerateTokenToIncorrectUser() throws Exception {
+
+        TokenRequestData tokenRequestData = new TokenRequestData();
+        tokenRequestData.setUsername("1323211");
+        tokenRequestData.setPassword("22323");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
+        String requestJson = objectWriter.writeValueAsString(tokenRequestData);
+
+        mvc.perform(post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
 }

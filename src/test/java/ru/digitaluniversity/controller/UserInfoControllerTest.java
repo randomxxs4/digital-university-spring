@@ -50,5 +50,10 @@ public class UserInfoControllerTest extends SpringUniversityApplicationTests {
                 .header("Authorization", "Bearer TOKEN_null"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+
+        mvc.perform(get(BASE_URL)
+                .header("Authorization", "Bearer TOKEN_user"))
+                .andDo(print())
+                .andExpect(status().isForbidden());
     }
 }

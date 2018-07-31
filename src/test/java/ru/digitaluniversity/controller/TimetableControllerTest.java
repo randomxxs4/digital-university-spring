@@ -34,20 +34,12 @@ public class TimetableControllerTest extends SpringUniversityApplicationTests {
     private TimetableRepository timetableRepository;
 
     @Test
-    public void testFindByTeacherRole() throws Exception {
+    public void testFindByRole() throws Exception {
         mvc.perform(get(BASE_URL)
                 .header("Authorization", "Bearer TOKEN1"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        mvc.perform(get(BASE_URL)
-                .header("Authorization", "Bearer TOKEN121"))
-                .andDo(print())
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void testFindByStudentRole() throws Exception {
         mvc.perform(get(BASE_URL)
                 .header("Authorization", "Bearer TOKEN2"))
                 .andDo(print())
@@ -57,6 +49,11 @@ public class TimetableControllerTest extends SpringUniversityApplicationTests {
                 .header("Authorization", "Bearer TOKEN3"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
+
+        mvc.perform(get(BASE_URL)
+                .header("Authorization", "Bearer TOKEN_user"))
+                .andDo(print())
+                .andExpect(status().isForbidden());
     }
 
     @Test

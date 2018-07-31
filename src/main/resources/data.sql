@@ -38,7 +38,8 @@ INSERT INTO ratings (id, rating) VALUES
 -- --
 INSERT INTO roles (id, role) VALUES
   (1, 'roleteacher'),
-  (2, 'rolestudent');
+  (2, 'rolestudent'),
+  (3, 'someuser');
 -- --
 INSERT INTO specialities (id, title) VALUES
   (1, 'Математик'),
@@ -60,14 +61,16 @@ INSERT INTO users (id, middlename, name, password, surname, username) VALUES
   (2, 'Владимирович', 'Александр', '456', 'Малявский', 'student'),
   (3, 'Дмитриевич', 'Дмитрий', '456', 'Дмитриев', 'student1'),
   (4, 'Алексеевич', 'Юрий', '456', 'Гагарин', 'student2'),
-  (5, NULL , NULL , '123', NULL, 'nullteacher');
+  (5, NULL , NULL , '123', NULL, 'nullteacher'),
+  (6, 'пользователь' , 'пользователь' , '111', 'пользователь', 'user');
 -- --
 INSERT INTO users_roles (users_id, roles_id) VALUES
   (1, 1),
   (2, 2),
   (3, 2),
   (4, 2),
-  (5, 1);
+  (5, 1),
+  (6, 3);
 -- --
 INSERT INTO teachers (id, position, user_id) VALUES
   (1, 1, 1);
@@ -100,4 +103,5 @@ INSERT INTO journals (id, date, rating, student, subject, timetable) VALUES
 INSERT INTO tokens (id, experation_date, token_string, user_id) VALUES
   (333, cast('2018-09-23 15:53:55.249' AS TIMESTAMP), 'TOKEN1', 1),
   (334, cast('2018-09-23 15:53:55.249' AS TIMESTAMP), 'TOKEN2', 2),
-  (335, cast('2018-09-23 15:53:55.249' AS TIMESTAMP), 'TOKEN_null', 5);
+  (335, cast('2018-09-23 15:53:55.249' AS TIMESTAMP), 'TOKEN_null', 5),
+  (336, cast('2018-09-23 15:53:55.249' AS TIMESTAMP), 'TOKEN_user', 6);

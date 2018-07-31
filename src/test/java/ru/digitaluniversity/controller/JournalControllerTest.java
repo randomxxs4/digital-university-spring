@@ -40,22 +40,14 @@ public class JournalControllerTest extends SpringUniversityApplicationTests {
     @Autowired
     private JournalRepository journalRepository;
 
-
     @Test
-    public void testFindByTeacherRole() throws Exception {
+    public void testFindByStudentRole() throws Exception {
+
         mvc.perform(get(BASE_URL)
                 .header("Authorization", "Bearer TOKEN1"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        mvc.perform(get(BASE_URL)
-                .header("Authorization", "Bearer TOKEN121"))
-                .andDo(print())
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void testFindByStudentRole() throws Exception {
         mvc.perform(get(BASE_URL)
                 .header("Authorization", "Bearer TOKEN2"))
                 .andDo(print())
@@ -65,6 +57,11 @@ public class JournalControllerTest extends SpringUniversityApplicationTests {
                 .header("Authorization", "Bearer TOKEN12231"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
+
+        mvc.perform(get(BASE_URL)
+                .header("Authorization", "Bearer TOKEN_user"))
+                .andDo(print())
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -109,6 +106,27 @@ public class JournalControllerTest extends SpringUniversityApplicationTests {
 
         mvc.perform(post(BASE_URL)
                 .header("Authorization", "Bearer TOKEN2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testUpdateByUser() throws Exception {
+        Integer id = 1;
+
+        RatingRequestData ratingRequestData = new RatingRequestData();
+        ratingRequestData.setId(id.toString());
+        ratingRequestData.setRating("4");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
+        String requestJson = objectWriter.writeValueAsString(ratingRequestData);
+
+        mvc.perform(post(BASE_URL)
+                .header("Authorization", "Bearer TOKEN_user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andDo(print())

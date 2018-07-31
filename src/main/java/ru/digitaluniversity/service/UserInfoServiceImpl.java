@@ -38,8 +38,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     private AuthorizationService authorizationService;
 
     @Override
-    public BasicInfoDto generateInfoByRole() throws NotFoundException {
-        try {
+    public BasicInfoDto generateInfoByRole() throws NotFoundException, ConvertException, UnsupportedRoleException {
             User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
             if (user != null) {
                 String userRole = authorizationService.getUserRole(user.getId());
@@ -49,23 +48,20 @@ public class UserInfoServiceImpl implements UserInfoService {
                         return generateStudentInfo(student.getId());
                     }
                 }
-                if (AuthorizationService.TEACHER_ROLE.equals(userRole)) {
+                else if (AuthorizationService.TEACHER_ROLE.equals(userRole)) {
                     Teacher teacher = teacherRepository.findByUser(user);
                     if (teacher != null) {
                         return generateTeacherInfo(teacher.getId());
                     }
+                } else {
+                    throw new UnsupportedRoleException();
                 }
             }
-        } catch (UnsupportedRoleException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         throw new NotFoundException();
     }
 
-    @Override
-    public AlternativeStudentDto generateStudentInfo(Integer id) throws Exception {
+
+    public AlternativeStudentDto generateStudentInfo(Integer id) throws ConvertException {
         Student student = studentRepository.findById(id).get();
         if (student != null) {
             AlternativeStudentDto studentDto = studentDtoConverter.convert(student);
@@ -79,8 +75,8 @@ public class UserInfoServiceImpl implements UserInfoService {
         throw new ConvertException();
     }
 
-    @Override
-    public AlternativeTeacherDto generateTeacherInfo(Integer id) throws Exception {
+
+    public AlternativeTeacherDto generateTeacherInfo(Integer id) throws ConvertException {
         Teacher teacher = teacherRepository.findById(id).get();
         if (teacher != null) {
             return teacherDtoConverter.convert(teacher);
