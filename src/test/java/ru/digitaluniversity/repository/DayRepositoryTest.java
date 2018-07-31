@@ -16,14 +16,14 @@ public class DayRepositoryTest extends SpringUniversityApplicationTests {
 
     @Test
     public void testGet() {
-        Day dayById = dayRepository.findById(101).get();
+        Integer id = 1;
+        Day dayById = dayRepository.findById(id).get();
         assertEquals("Понедельник", dayById.getDay());
     }
 
     @Test
     public void testSave() {
         Day day = new Day();
-        day.setId(new Integer(108));
         day.setDay("Восьмойденьнедели");
         Day savedDay = dayRepository.save(day);
 

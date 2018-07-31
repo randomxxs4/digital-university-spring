@@ -30,16 +30,18 @@ public class JournalRepositoryTest extends SpringUniversityApplicationTests {
 
     @Test
     public void testGet() {
-        Journal journal = journalRepository.findById(211).get();
+        Integer id = 1;
+        Journal journal = journalRepository.findById(id).get();
         assertEquals("Малявский", journal.getJournalStudent().getUser().getSurname());
     }
 
     @Test
     public void testSave() {
-        Student student = studentRepository.findById(191).get();
-        Rating rating = ratingRepostitory.findById(145).get();
-        Timetable timetable = timetableRepository.findById(201).get();
-        Subject subject = subjectRepository.findById(171).get();
+        Integer id = 1;
+        Student student = studentRepository.findById(id).get();
+        Rating rating = ratingRepostitory.findById(id).get();
+        Timetable timetable = timetableRepository.findById(id).get();
+        Subject subject = subjectRepository.findById(id).get();
         Journal journal = new Journal();
         journal.setJournalTimetable(timetable);
         journal.setJournalRating(rating);
