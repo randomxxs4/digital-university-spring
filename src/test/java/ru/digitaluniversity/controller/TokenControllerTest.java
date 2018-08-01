@@ -1,8 +1,5 @@
 package ru.digitaluniversity.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +13,7 @@ import ru.digitaluniversity.security.dto.TokenRequestData;
 import ru.digitaluniversity.security.entity.Token;
 import ru.digitaluniversity.security.repository.TokenRepository;
 import ru.digitaluniversity.security.service.AuthorizationService;
+import ru.digitaluniversity.serializer.JsonSerializer;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertNotNull;
@@ -49,20 +47,15 @@ public class TokenControllerTest extends SpringUniversityApplicationTests {
         tokenRequestData.setUsername("teacher");
         tokenRequestData.setPassword("123");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
-        String requestJson = objectWriter.writeValueAsString(tokenRequestData);
-
         String contentAsString = mvc.perform(post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson))
+                .content(JsonSerializer.toJSON(tokenRequestData)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(tokenRequestData.getUsername())))
                 .andReturn().getResponse().getContentAsString();
 
-        TokenDto tokenDto = objectMapper.readValue(contentAsString, TokenDto.class);
+        TokenDto tokenDto = (TokenDto) JsonSerializer.fromJSON(contentAsString, TokenDto.class);
         Token byTokenString = tokenRepository.findByTokenString(tokenDto.getTokenString());
         assertNotNull(byTokenString);
     }
@@ -74,20 +67,15 @@ public class TokenControllerTest extends SpringUniversityApplicationTests {
         tokenRequestData.setUsername("student");
         tokenRequestData.setPassword("456");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
-        String requestJson = objectWriter.writeValueAsString(tokenRequestData);
-
         String contentAsString = mvc.perform(post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson))
+                .content(JsonSerializer.toJSON(tokenRequestData)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(tokenRequestData.getUsername())))
                 .andReturn().getResponse().getContentAsString();
 
-        TokenDto tokenDto = objectMapper.readValue(contentAsString, TokenDto.class);
+        TokenDto tokenDto = (TokenDto) JsonSerializer.fromJSON(contentAsString, TokenDto.class);
         Token byTokenString = tokenRepository.findByTokenString(tokenDto.getTokenString());
         assertNotNull(byTokenString);
     }
@@ -99,14 +87,9 @@ public class TokenControllerTest extends SpringUniversityApplicationTests {
         tokenRequestData.setUsername("user");
         tokenRequestData.setPassword("111");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
-        String requestJson = objectWriter.writeValueAsString(tokenRequestData);
-
         mvc.perform(post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson))
+                .content(JsonSerializer.toJSON(tokenRequestData)))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
@@ -118,16 +101,10 @@ public class TokenControllerTest extends SpringUniversityApplicationTests {
         tokenRequestData.setUsername("1323211");
         tokenRequestData.setPassword("22323");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
-        String requestJson = objectWriter.writeValueAsString(tokenRequestData);
-
         mvc.perform(post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson))
+                .content(JsonSerializer.toJSON(tokenRequestData)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
-
 }

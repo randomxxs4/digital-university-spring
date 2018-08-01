@@ -6,7 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.digitaluniversity.SpringUniversityApplicationTests;
 import ru.digitaluniversity.entity.*;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @Transactional
 public class TimetableRepositoryTest extends SpringUniversityApplicationTests {
@@ -29,8 +32,8 @@ public class TimetableRepositoryTest extends SpringUniversityApplicationTests {
     @Test
     public void testGet() {
         Integer id = 1;
-        Timetable timetable = timetableRepository.findById(id).get();
-        assertEquals("Иванов", timetable.getTimetableTeacher().getUser().getSurname());
+        Optional<Timetable> timetable = timetableRepository.findById(id);
+        assertNotNull(timetable.get());
     }
 
     @Test

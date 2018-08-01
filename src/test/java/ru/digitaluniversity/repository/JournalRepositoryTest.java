@@ -7,8 +7,10 @@ import ru.digitaluniversity.SpringUniversityApplicationTests;
 import ru.digitaluniversity.entity.*;
 
 import java.util.Date;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @Transactional
 public class JournalRepositoryTest extends SpringUniversityApplicationTests {
@@ -30,9 +32,9 @@ public class JournalRepositoryTest extends SpringUniversityApplicationTests {
 
     @Test
     public void testGet() {
-        Integer id = 1;
-        Journal journal = journalRepository.findById(id).get();
-        assertEquals("Малявский", journal.getJournalStudent().getUser().getSurname());
+        Integer id = 2;
+        Optional<Journal> journal = journalRepository.findById(id);
+        assertNotNull(journal.get());
     }
 
     @Test
