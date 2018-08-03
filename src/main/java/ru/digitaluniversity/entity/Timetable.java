@@ -22,7 +22,7 @@ public class Timetable {
     private Day timetableDay;
     @ManyToOne
     private Pair timetablePair;
-    @OneToMany(mappedBy = "journalTimetable")
+    @OneToMany(mappedBy = "journalTimetable", fetch = FetchType.EAGER)
     private List<Journal> timetableJournal;
 
     public Timetable() {

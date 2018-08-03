@@ -6,7 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.digitaluniversity.SpringUniversityApplicationTests;
 import ru.digitaluniversity.entity.*;
 
-import static org.junit.Assert.*;
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @Transactional
 public class TimetableRepositoryTest extends SpringUniversityApplicationTests {
@@ -28,16 +31,18 @@ public class TimetableRepositoryTest extends SpringUniversityApplicationTests {
 
     @Test
     public void testGet() {
-        Timetable timetable = timetableRepository.findById(201).get();
-        assertEquals("Иванов", timetable.getTimetableTeacher().getUser().getSurname());
+        Integer id = 1;
+        Optional<Timetable> timetable = timetableRepository.findById(id);
+        assertNotNull(timetable.get());
     }
 
     @Test
     public void testSave() {
-        Teacher teacher = teacherRepository.findById(181).get();
-        Day day = dayRepository.findById(101).get();
-        Group group = groupRepository.findById(111).get();
-        Pair pair = pairRepository.findById(121).get();
+        Integer id = 1;
+        Teacher teacher = teacherRepository.findById(id).get();
+        Day day = dayRepository.findById(id).get();
+        Group group = groupRepository.findById(id).get();
+        Pair pair = pairRepository.findById(id).get();
         Timetable timetable = new Timetable();
         timetable.setTimetableDay(day);
         timetable.setTimetableGroup(group);

@@ -7,15 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.digitaluniversity.SpringUniversityApplicationTests;
+import ru.digitaluniversity.constant.TokenConst;
 import ru.digitaluniversity.contollers.DayController;
 import ru.digitaluniversity.entity.Day;
 import ru.digitaluniversity.repository.DayRepository;
 import ru.digitaluniversity.service.DayService;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -42,9 +45,10 @@ public class DayControllerTest extends SpringUniversityApplicationTests {
         Day day = dayRepository.findById(id).get();
 
         mvc.perform(get(BASE_URL + "/" + id)
-                .header("Authorization", "Bearer TOKEN1"))
+                .header("Authorization", TokenConst.TEACHER_TOKEN))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString(day.getDay())));
+                .andExpect(content().string(containsString(day.getDay())))
+                .andExpect(jsonPath("$.title", is(day.getDay())));
     }
 }

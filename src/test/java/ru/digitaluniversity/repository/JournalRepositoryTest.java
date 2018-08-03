@@ -1,18 +1,16 @@
 package ru.digitaluniversity.repository;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.digitaluniversity.SpringUniversityApplicationTests;
 import ru.digitaluniversity.entity.*;
 
 import java.util.Date;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @Transactional
 public class JournalRepositoryTest extends SpringUniversityApplicationTests {
@@ -34,23 +32,16 @@ public class JournalRepositoryTest extends SpringUniversityApplicationTests {
 
     @Test
     public void testGet() {
-        Journal journal = journalRepository.findById(211).get();
-        assertEquals("Малявский", journal.getJournalStudent().getUser().getSurname());
+        Integer id = 2;
+        Optional<Journal> journal = journalRepository.findById(id);
+        assertNotNull(journal.get());
     }
 
     @Test
     public void testSave() {
-        Student student = studentRepository.findById(191).get();
-        Rating rating = ratingRepostitory.findById(145).get();
-        Timetable timetable = timetableRepository.findById(201).get();
-        Subject subject = subjectRepository.findById(171).get();
-        Journal journal = new Journal();
-        journal.setJournalTimetable(timetable);
-        journal.setJournalRating(rating);
-        journal.setJournalDate(new Date());
-        journal.setJournalStudent(student);
-        journal.setJournalSubject(subject);
+        Integer id = 1;
 
+        Journal journal = new Journal();
         Journal savedJournal = journalRepository.save(journal);
 
         Journal journalFromRepos = journalRepository.findById(savedJournal.getId()).get();
