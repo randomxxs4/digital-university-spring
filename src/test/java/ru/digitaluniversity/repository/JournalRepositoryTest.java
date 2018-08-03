@@ -40,17 +40,8 @@ public class JournalRepositoryTest extends SpringUniversityApplicationTests {
     @Test
     public void testSave() {
         Integer id = 1;
-        Student student = studentRepository.findById(id).get();
-        Rating rating = ratingRepostitory.findById(id).get();
-        Timetable timetable = timetableRepository.findById(id).get();
-        Subject subject = subjectRepository.findById(id).get();
-        Journal journal = new Journal();
-        journal.setJournalTimetable(timetable);
-        journal.setJournalRating(rating);
-        journal.setJournalDate(new Date());
-        journal.setJournalStudent(student);
-        journal.setJournalSubject(subject);
 
+        Journal journal = new Journal();
         Journal savedJournal = journalRepository.save(journal);
 
         Journal journalFromRepos = journalRepository.findById(savedJournal.getId()).get();

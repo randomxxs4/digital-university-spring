@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  database:
+    container_name: db
+    image: postgres:9.6
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: 9662
+      POSTGRES_DB: test4
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+
+  java:
+    container_name: app
+    image: spring-university
+    links:
+     - "database"
+    ports:
+      - 8081:8081
+
+
