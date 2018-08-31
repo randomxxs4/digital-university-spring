@@ -88,7 +88,7 @@ public class TimetableServiceImpl implements TimetableService {
         return allPages.getContent().stream()
                 .map(timetable -> {
                     try {
-                        return converter.convert(timetable);
+                        return converter.convertToDto(timetable);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Timetable to Dto");
@@ -99,7 +99,12 @@ public class TimetableServiceImpl implements TimetableService {
     @Override
     public TimetableDto findById(Integer id) throws ConvertException, NotFoundException {
         Timetable timetable = timetableRepository.findById(id).orElseThrow(NotFoundException::new);
-        TimetableDto timetableDto = converter.convert(timetable);
+        TimetableDto timetableDto = converter.convertToDto(timetable);
         return timetableDto;
+    }
+
+    @Override
+    public TimetableDto create(TimetableDto obj) {
+        return null;
     }
 }

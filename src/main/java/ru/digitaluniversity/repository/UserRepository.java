@@ -7,4 +7,6 @@ import ru.digitaluniversity.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     User findByUsername(String username);
+
+    User findBySurname(String surname);
 }

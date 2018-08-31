@@ -8,10 +8,26 @@ import ru.digitaluniversity.exception.ConvertException;
 @Service
 public class RatingConverter implements Converter<Rating, RatingDto> {
     @Override
-    public RatingDto convert(Rating obj) throws ConvertException, ConvertException {
+    public RatingDto convertToDto(Rating obj) {
         RatingDto ratingDto = new RatingDto();
-        ratingDto.setId(obj.getId().toString());
-        ratingDto.setRating(obj.getRating());
+        if (obj.getId() != null) {
+            ratingDto.setId(obj.getId().toString());
+        }
+        if (obj.getRating() != null) {
+            ratingDto.setRating(obj.getRating());
+        }
         return ratingDto;
+    }
+
+    @Override
+    public Rating convertToEntity(RatingDto obj) {
+        Rating rating = new Rating();
+        if (obj.getId() != null) {
+            rating.setId(Integer.parseInt(obj.getId()));
+        }
+        if (obj.getRating() != null) {
+            rating.setRating(obj.getRating());
+        }
+        return rating;
     }
 }

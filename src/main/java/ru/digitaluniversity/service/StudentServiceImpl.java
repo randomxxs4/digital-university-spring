@@ -36,7 +36,7 @@ public class StudentServiceImpl implements StudentService {
         List<StudentDto> studentDtoList = allPages.getContent().stream()
                 .map(student -> {
                     try {
-                        return converter.convert(student);
+                        return converter.convertToDto(student);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Student to Dto");
@@ -50,10 +50,15 @@ public class StudentServiceImpl implements StudentService {
     public StudentDto findById(Integer id) throws ConvertException, NotFoundException {
         Student student = studentRepository.findById(id).get();
         if (student != null) {
-            StudentDto studentDto = converter.convert(student);
+            StudentDto studentDto = converter.convertToDto(student);
             return studentDto;
         } else {
             throw new NotFoundException("Student not found");
         }
+    }
+
+    @Override
+    public StudentDto create(StudentDto obj) {
+        return null;
     }
 }

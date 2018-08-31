@@ -101,7 +101,7 @@ public class JournalServiceImpl implements JournalService {
                     if (ratingObj != null) {
                         journal.setJournalRating(ratingObj);
                         Journal savedJournal = journalRepository.save(journal);
-                        return converter.convert(savedJournal);
+                        return converter.convertToDto(savedJournal);
                     } else {
                         throw new NotFoundException("Rating not found");
                     }
@@ -126,18 +126,23 @@ public class JournalServiceImpl implements JournalService {
     public JournalDto findById(Integer id) throws ConvertException, NotFoundException {
         Journal journal = journalRepository.findById(id).get();
         if (journal != null) {
-            JournalDto journalDto = converter.convert(journal);
+            JournalDto journalDto = converter.convertToDto(journal);
             return journalDto;
         } else {
             throw new NotFoundException("Journal not found");
         }
     }
 
+    @Override
+    public JournalDto create(JournalDto obj) {
+        return null;
+    }
+
     private List<JournalDto> getStreamConvert(Page<Journal> journalPage) {
         return journalPage.getContent().stream()
                 .map(journal -> {
                     try {
-                        return converter.convert(journal);
+                        return converter.convertToDto(journal);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Journal to Dto");
@@ -160,7 +165,7 @@ public class JournalServiceImpl implements JournalService {
         return journalList.stream()
                 .map(journal -> {
                     try {
-                        return converter.convert(journal);
+                        return converter.convertToDto(journal);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Journal to Dto");

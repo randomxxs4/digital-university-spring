@@ -38,7 +38,7 @@ public class PositionServiceImpl implements PositionService {
         List<PositionDto> positionDtoList = allPages.getContent().stream()
                 .map(position -> {
                     try {
-                        return converter.convert(position);
+                        return converter.convertToDto(position);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Position to Dto");
@@ -52,10 +52,15 @@ public class PositionServiceImpl implements PositionService {
     public PositionDto findById(Integer id) throws ConvertException, NotFoundException {
         Position position = positionRepository.findById(id).get();
         if (position != null) {
-            PositionDto positionDto = converter.convert(position);
+            PositionDto positionDto = converter.convertToDto(position);
             return positionDto;
         } else {
             throw new NotFoundException("Position not found");
         }
+    }
+
+    @Override
+    public PositionDto create(PositionDto obj) {
+        return null;
     }
 }

@@ -36,7 +36,7 @@ public class RatingServiceImpl implements RatingService {
         List<RatingDto> ratingDtoList = allPages.getContent().stream()
                 .map(rating -> {
                     try {
-                        return converter.convert(rating);
+                        return converter.convertToDto(rating);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Rating to Dto");
@@ -50,10 +50,15 @@ public class RatingServiceImpl implements RatingService {
     public RatingDto findById(Integer id) throws ConvertException, NotFoundException {
         Rating rating = ratingRepostitory.findById(id).get();
         if (rating != null) {
-            RatingDto ratingDto = converter.convert(rating);
+            RatingDto ratingDto = converter.convertToDto(rating);
             return ratingDto;
         } else {
             throw new NotFoundException("Rating not found");
         }
+    }
+
+    @Override
+    public RatingDto create(RatingDto obj) {
+        return null;
     }
 }

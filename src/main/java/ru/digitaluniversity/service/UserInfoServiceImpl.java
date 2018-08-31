@@ -64,7 +64,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     public AlternativeStudentDto generateStudentInfo(Integer id) throws ConvertException {
         Student student = studentRepository.findById(id).get();
         if (student != null) {
-            AlternativeStudentDto studentDto = studentDtoConverter.convert(student);
+            AlternativeStudentDto studentDto = studentDtoConverter.convertToDto(student);
             AlternativeGroupDto alternativeGroupDto = new AlternativeGroupDto();
             alternativeGroupDto.setId(student.getStudentGroup().getId().toString());
             alternativeGroupDto.setTitle(student.getStudentGroup().getTitle());
@@ -79,7 +79,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     public AlternativeTeacherDto generateTeacherInfo(Integer id) throws ConvertException {
         Teacher teacher = teacherRepository.findById(id).get();
         if (teacher != null) {
-            return teacherDtoConverter.convert(teacher);
+            return teacherDtoConverter.convertToDto(teacher);
         }
         throw new ConvertException();
     }

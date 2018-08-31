@@ -36,7 +36,7 @@ public class SubjectServiceImpl implements SubjectService {
         List<SubjectDto> subjectDtoList = allPages.getContent().stream()
                 .map(subject -> {
                     try {
-                        return converter.convert(subject);
+                        return converter.convertToDto(subject);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Subject to Dto");
@@ -50,10 +50,15 @@ public class SubjectServiceImpl implements SubjectService {
     public SubjectDto findById(Integer id) throws ConvertException, NotFoundException {
         Subject subject = subjectRepository.findById(id).get();
         if (subject != null) {
-            SubjectDto subjectDto = converter.convert(subject);
+            SubjectDto subjectDto = converter.convertToDto(subject);
             return subjectDto;
         } else {
             throw new NotFoundException("Subject not found");
         }
+    }
+
+    @Override
+    public SubjectDto create(SubjectDto obj) {
+        return null;
     }
 }

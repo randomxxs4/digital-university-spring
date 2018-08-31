@@ -36,7 +36,7 @@ public class TeacherServiceImpl implements TeacherService {
         List<TeacherDto> teacherDtoList = allPages.getContent().stream()
                 .map(teacher -> {
                     try {
-                        return converter.convert(teacher);
+                        return converter.convertToDto(teacher);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Teacher to Dto");
@@ -50,10 +50,15 @@ public class TeacherServiceImpl implements TeacherService {
     public TeacherDto findById(Integer id) throws ConvertException, NotFoundException {
         Teacher teacher = teacherRepository.findById(id).get();
         if (teacher != null) {
-            TeacherDto teacherDto = converter.convert(teacher);
+            TeacherDto teacherDto = converter.convertToDto(teacher);
             return teacherDto;
         } else {
             throw new NotFoundException("Teacher not found");
         }
+    }
+
+    @Override
+    public TeacherDto create(TeacherDto obj) {
+        return null;
     }
 }

@@ -38,7 +38,7 @@ public class SpecialityServiceImpl implements SpecialityService {
         List<SpecialityDto> specialityDtoList = allPages.getContent().stream()
                 .map(speciality -> {
                     try {
-                        return converter.convert(speciality);
+                        return converter.convertToDto(speciality);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Speciality to Dto");
@@ -52,10 +52,15 @@ public class SpecialityServiceImpl implements SpecialityService {
     public SpecialityDto findById(Integer id) throws ConvertException, NotFoundException {
         Speciality speciality = specialityRepository.findById(id).get();
         if (speciality != null) {
-            SpecialityDto specialityDto = converter.convert(speciality);
+            SpecialityDto specialityDto = converter.convertToDto(speciality);
             return specialityDto;
         } else {
             throw new NotFoundException("Speciality not found");
         }
+    }
+
+    @Override
+    public SpecialityDto create(SpecialityDto obj) {
+        return null;
     }
 }
