@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.digitaluniversity.converter.Converter;
+import ru.digitaluniversity.converter.ManyToManyConverter;
 import ru.digitaluniversity.dto.SubjectDto;
 import ru.digitaluniversity.entity.Subject;
 import ru.digitaluniversity.exception.ConvertException;
@@ -27,16 +28,16 @@ public class SubjectServiceImpl implements SubjectService {
     private SubjectRepository subjectRepository;
 
     @Autowired
-    private Converter<Subject, SubjectDto> converter;
+    private ManyToManyConverter<Subject, SubjectDto> converter;
 
     @Override
     public Page<SubjectDto> findAll(Optional<Integer> page, Optional<Integer> size) {
-        PageRequest pageRequest = new PageRequest(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
+        PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
         Page<Subject> allPages = subjectRepository.findAll(pageRequest);
         List<SubjectDto> subjectDtoList = allPages.getContent().stream()
                 .map(subject -> {
                     try {
-                        return converter.convert(subject);
+                        return converter.convertManyToManyLink(subject);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Subject to Dto");
@@ -50,10 +51,15 @@ public class SubjectServiceImpl implements SubjectService {
     public SubjectDto findById(Integer id) throws ConvertException, NotFoundException {
         Subject subject = subjectRepository.findById(id).get();
         if (subject != null) {
-            SubjectDto subjectDto = converter.convert(subject);
+            SubjectDto subjectDto = converter.convertManyToManyLink(subject);
             return subjectDto;
         } else {
             throw new NotFoundException("Subject not found");
         }
+    }
+
+    @Override
+    public SubjectDto create(SubjectDto obj) {
+        return converter.convertManyToManyLink(subjectRepository.save(converter.convertToEntity(obj)));
     }
 }

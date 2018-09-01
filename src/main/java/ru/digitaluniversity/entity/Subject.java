@@ -2,6 +2,7 @@ package ru.digitaluniversity.entity;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,7 +21,7 @@ public class Subject {
                     CascadeType.MERGE
             },
             mappedBy = "subjects")
-    private Set<Position> positions = new HashSet<>();
+    private List<Position> positions;
 
     public Subject() {
     }
@@ -41,11 +42,11 @@ public class Subject {
         this.title = title;
     }
 
-    public Set<Position> getPositions() {
+    public List<Position> getPositions() {
         return positions;
     }
 
-    public void setPositions(Set<Position> positions) {
+    public void setPositions(List<Position> positions) {
         this.positions = positions;
     }
 }

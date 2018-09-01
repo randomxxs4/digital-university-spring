@@ -1,6 +1,7 @@
 package ru.digitaluniversity.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * The type Teacher.
@@ -16,9 +17,13 @@ public class Teacher{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "position")
-    private Position teacherPosition;
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            mappedBy = "teachers")
+    private List<Position> positions;
 
     public Teacher() {
     }
@@ -39,11 +44,11 @@ public class Teacher{
         this.user = user;
     }
 
-    public Position getTeacherPosition() {
-        return teacherPosition;
+    public List<Position> getPositions() {
+        return positions;
     }
 
-    public void setTeacherPosition(Position teacherPosition) {
-        this.teacherPosition = teacherPosition;
+    public void setPositions(List<Position> positions) {
+        this.positions = positions;
     }
 }

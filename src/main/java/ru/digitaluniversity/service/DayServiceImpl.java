@@ -10,6 +10,7 @@ import ru.digitaluniversity.dto.DayDto;
 import ru.digitaluniversity.entity.Day;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
+import ru.digitaluniversity.exception.NotImplementedMethodException;
 import ru.digitaluniversity.exception.StreamConvertException;
 import ru.digitaluniversity.repository.DayRepository;
 
@@ -35,7 +36,7 @@ public class DayServiceImpl implements DayService {
         List<DayDto> dayDtoList = allPages.getContent().stream()
                 .map(day -> {
                     try {
-                        return converter.convert(day);
+                        return converter.convertToDto(day);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Day to Dto");
@@ -49,10 +50,15 @@ public class DayServiceImpl implements DayService {
     public DayDto findById(Integer id) throws ConvertException, NotFoundException {
         Day day = dayRepository.findById(id).get();
         if (day != null) {
-            DayDto dayDto = converter.convert(day);
+            DayDto dayDto = converter.convertToDto(day);
             return dayDto;
         } else {
             throw new NotFoundException("Day not found");
         }
+    }
+
+    @Override
+    public DayDto create(DayDto obj) {
+        throw new NotImplementedMethodException("Метод не поддерживается!");
     }
 }

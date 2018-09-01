@@ -10,6 +10,7 @@ import ru.digitaluniversity.dto.PairDto;
 import ru.digitaluniversity.entity.Pair;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
+import ru.digitaluniversity.exception.NotImplementedMethodException;
 import ru.digitaluniversity.exception.StreamConvertException;
 import ru.digitaluniversity.repository.PairRepository;
 
@@ -36,7 +37,7 @@ public class PairServiceImpl implements PairService {
         List<PairDto> journalDtoList = allPages.getContent().stream()
                 .map(pair -> {
                     try {
-                        return converter.convert(pair);
+                        return converter.convertToDto(pair);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Pair to Dto");
@@ -50,10 +51,15 @@ public class PairServiceImpl implements PairService {
     public PairDto findById(Integer id) throws ConvertException, NotFoundException {
         Pair pair = pairRepository.findById(id).get();
         if (pair != null) {
-            PairDto pairDto = converter.convert(pair);
+            PairDto pairDto = converter.convertToDto(pair);
             return pairDto;
         } else {
             throw new NotFoundException("Pair not found");
         }
+    }
+
+    @Override
+    public PairDto create(PairDto obj) {
+        throw new NotImplementedMethodException();
     }
 }

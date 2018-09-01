@@ -8,10 +8,26 @@ import ru.digitaluniversity.exception.ConvertException;
 @Service
 public class PairConverter implements Converter<Pair, PairDto> {
     @Override
-    public PairDto convert(Pair obj) throws ConvertException, ConvertException {
+    public PairDto convertToDto(Pair obj) {
         PairDto pairDto = new PairDto();
-        pairDto.setId(obj.getId().toString());
-        pairDto.setNumber(obj.getNumber().toString());
+        if (obj.getId() != null) {
+            pairDto.setId(obj.getId().toString());
+        }
+        if (obj.getNumber() != null) {
+            pairDto.setNumber(obj.getNumber().toString());
+        }
         return pairDto;
+    }
+
+    @Override
+    public Pair convertToEntity(PairDto obj) {
+        Pair pair = new Pair();
+        if (obj.getId() != null) {
+            pair.setId(Integer.parseInt(obj.getId()));
+        }
+        if (obj.getNumber() != null) {
+            pair.setNumber(Integer.parseInt(obj.getNumber()));
+        }
+        return pair;
     }
 }

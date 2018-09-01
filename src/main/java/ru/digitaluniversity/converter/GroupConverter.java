@@ -8,10 +8,26 @@ import ru.digitaluniversity.exception.ConvertException;
 @Service
 public class GroupConverter implements Converter<Group, GroupDto> {
     @Override
-    public GroupDto convert(Group obj) throws ConvertException, ConvertException {
+    public GroupDto convertToDto(Group obj) {
         GroupDto groupDto = new GroupDto();
-        groupDto.setId(obj.getId().toString());
-        groupDto.setTitle(obj.getTitle());
+        if (obj.getId() != null) {
+            groupDto.setId(obj.getId().toString());
+        }
+        if (obj.getTitle() != null) {
+            groupDto.setTitle(obj.getTitle());
+        }
         return groupDto;
+    }
+
+    @Override
+    public Group convertToEntity(GroupDto obj) {
+        Group group = new Group();
+        if (obj.getId() != null) {
+            group.setId(Integer.parseInt(obj.getId()));
+        }
+        if (obj.getTitle() != null) {
+            group.setTitle(obj.getTitle());
+        }
+        return group;
     }
 }

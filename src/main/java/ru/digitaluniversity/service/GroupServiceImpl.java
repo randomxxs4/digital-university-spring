@@ -36,7 +36,7 @@ public class GroupServiceImpl implements GroupService {
         List<GroupDto> dayDtoList = allPages.getContent().stream()
                 .map(group -> {
                     try {
-                        return converter.convert(group);
+                        return converter.convertToDto(group);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Group to Dto");
@@ -50,11 +50,15 @@ public class GroupServiceImpl implements GroupService {
     public GroupDto findById(Integer id) throws ConvertException, NotFoundException {
         Group group = groupRepository.findById(id).get();
         if (group != null) {
-            GroupDto groupDto = converter.convert(group);
+            GroupDto groupDto = converter.convertToDto(group);
             return groupDto;
         } else {
             throw new NotFoundException("Group not found");
         }
+    }
+
+    public GroupDto create(GroupDto groupDto) {
+        return converter.convertToDto(groupRepository.save(converter.convertToEntity(groupDto)));
     }
 }
 

@@ -4,16 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.digitaluniversity.entity.User;
 import ru.digitaluniversity.exception.NotLogInException;
 import ru.digitaluniversity.exception.TokenNotFoundException;
 import ru.digitaluniversity.exception.UnsupportedRoleException;
 import ru.digitaluniversity.repository.UserRepository;
+import ru.digitaluniversity.security.component.AuthenticationToken;
 import ru.digitaluniversity.security.dto.TokenDto;
 import ru.digitaluniversity.security.dto.TokenRequestData;
-import ru.digitaluniversity.security.component.AuthenticationToken;
 import ru.digitaluniversity.security.entity.Token;
 import ru.digitaluniversity.security.entity.UserRole;
 import ru.digitaluniversity.security.repository.RoleRepository;
@@ -22,9 +20,10 @@ import ru.digitaluniversity.security.repository.TokenRepository;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class AuthorizationServiceImpl implements AuthorizationService{
+public class AuthorizationServiceImpl implements AuthorizationService {
 
     private static final Long TIME_5_MIN = 300000L;
 
@@ -43,8 +42,8 @@ public class AuthorizationServiceImpl implements AuthorizationService{
     @Override
     public TokenDto generateToken(TokenRequestData requestData, HttpSession session) throws UnsupportedRoleException {
         User user = userRepository.findByUsername(requestData.getUsername());
-        if (user != null){
-            if (user.getPassword().equals(requestData.getPassword())){
+        if (user != null) {
+            if (user.getPassword().equals(requestData.getPassword())) {
                 long time = new Date().getTime();
                 Long expirationDate = time + TIME_5_MIN;
                 String tokenString = "TOKEN" + user.getId() + expirationDate;
@@ -80,10 +79,10 @@ public class AuthorizationServiceImpl implements AuthorizationService{
     @Override
     public void createLogin(String tokenString) {
         Token token = tokenRepository.findByTokenString(tokenString);
-        if (token != null){
+        if (token != null) {
             long experationTime = token.getExperationDate().getTime();
             long currentTime = new Date().getTime();
-            if (currentTime < experationTime){
+            if (currentTime < experationTime) {
                 User tokenUser = token.getUser();
                 AuthenticationToken authenticationToken = new AuthenticationToken(tokenString, tokenUser);
                 authProvider.authenticate(authenticationToken);
@@ -93,7 +92,7 @@ public class AuthorizationServiceImpl implements AuthorizationService{
 
     @Override
     public boolean hasRole(String role) throws Exception {
-        AuthenticationToken authenticationToken = (AuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
+        AuthenticationToken authenticationToken = (AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         List<UserRole> roles = authenticationToken.getUser().getRoles();
         UserRole byRole = roleRepository.findByRole(role);
         if (roles != null && byRole != null) {
@@ -111,7 +110,7 @@ public class AuthorizationServiceImpl implements AuthorizationService{
             UserRole teacherRole = roleRepository.findByRole(AuthorizationService.TEACHER_ROLE);
             if (roles.contains(teacherRole)) {
                 return AuthorizationService.TEACHER_ROLE;
-            } else if (roles.contains(studentRole)){
+            } else if (roles.contains(studentRole)) {
                 return AuthorizationService.STUDENT_ROLE;
             }
         }
@@ -121,10 +120,34 @@ public class AuthorizationServiceImpl implements AuthorizationService{
     @Override
     public Authentication getAuthentication(String tokenString) throws TokenNotFoundException {
         Token token = tokenRepository.findByTokenString(tokenString);
-        if (checkToken(token.getTokenString())){
+        if (checkToken(token.getTokenString())) {
             User user = userRepository.findByUsername(token.getUser().getUsername());
             return new AuthenticationToken(tokenString, user);
         }
-        throw  new TokenNotFoundException();
+        throw new TokenNotFoundException();
+    }
+
+    @Override
+    public boolean isTeacher() {
+        User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
+        List<UserRole> userRoles = user.getRoles();
+        Long count = userRoles.stream().filter((userRole -> userRole.getRole().equals(AuthorizationService.TEACHER_ROLE))).collect(Collectors.counting());
+        return count > 0 ? true : false;
+    }
+
+    @Override
+    public boolean isStudent() {
+        User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
+        List<UserRole> userRoles = user.getRoles();
+        Long count = userRoles.stream().filter((userRole -> userRole.getRole().equals(AuthorizationService.STUDENT_ROLE))).collect(Collectors.counting());
+        return count > 0 ? true : false;
+    }
+
+    @Override
+    public boolean isAdmin() {
+        User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
+        List<UserRole> userRoles = user.getRoles();
+        Long count = userRoles.stream().filter((userRole -> userRole.getRole().equals(AuthorizationService.ADMIN_ROLE))).collect(Collectors.counting());
+        return count > 0 ? true : false;
     }
 }

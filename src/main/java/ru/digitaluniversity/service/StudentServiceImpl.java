@@ -12,6 +12,7 @@ import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
 import ru.digitaluniversity.exception.StreamConvertException;
 import ru.digitaluniversity.repository.StudentRepository;
+import ru.digitaluniversity.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,9 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private Converter<Student, StudentDto> converter;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public Page<StudentDto> findAll(Optional<Integer> page, Optional<Integer> size) {
         PageRequest pageRequest = new PageRequest(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
@@ -36,7 +40,7 @@ public class StudentServiceImpl implements StudentService {
         List<StudentDto> studentDtoList = allPages.getContent().stream()
                 .map(student -> {
                     try {
-                        return converter.convert(student);
+                        return converter.convertToDto(student);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Student to Dto");
@@ -50,10 +54,17 @@ public class StudentServiceImpl implements StudentService {
     public StudentDto findById(Integer id) throws ConvertException, NotFoundException {
         Student student = studentRepository.findById(id).get();
         if (student != null) {
-            StudentDto studentDto = converter.convert(student);
+            StudentDto studentDto = converter.convertToDto(student);
             return studentDto;
         } else {
             throw new NotFoundException("Student not found");
         }
+    }
+
+    @Override
+    public StudentDto create(StudentDto obj) {
+        Student student = converter.convertToEntity(obj);
+        userRepository.save(student.getUser());
+        return converter.convertToDto(student);
     }
 }

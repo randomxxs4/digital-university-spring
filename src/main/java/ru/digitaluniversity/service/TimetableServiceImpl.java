@@ -15,12 +15,14 @@ import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
 import ru.digitaluniversity.exception.NotLogInException;
 import ru.digitaluniversity.exception.StreamConvertException;
+import ru.digitaluniversity.repository.JournalRepository;
 import ru.digitaluniversity.repository.StudentRepository;
 import ru.digitaluniversity.repository.TeacherRepository;
 import ru.digitaluniversity.repository.TimetableRepository;
 import ru.digitaluniversity.security.component.AuthenticationToken;
 import ru.digitaluniversity.security.service.AuthorizationService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,14 +48,15 @@ public class TimetableServiceImpl implements TimetableService {
     @Autowired
     private TeacherRepository teacherRepository;
 
+    @Autowired
+    private JournalRepository journalRepository;
 
     @Override
     public Page<TimetableDto> findTimetableByRole(Optional<Integer> page, Optional<Integer> size) throws Exception {
         PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
         User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
         if (user != null) {
-            String userRole = authorizationService.getUserRole(user.getId());
-            if (AuthorizationService.STUDENT_ROLE.equals(userRole)) {
+            if (authorizationService.isStudent()) {
                 Student student = studentRepository.findByUser(user);
                 if (student != null) {
                     Page<Timetable> timetablePage = timetableRepository.findByTimetableGroup(student.getStudentGroup(), pageRequest);
@@ -62,7 +65,7 @@ public class TimetableServiceImpl implements TimetableService {
                     return result;
                 }
             }
-            if (AuthorizationService.TEACHER_ROLE.equals(userRole)) {
+            if (authorizationService.isTeacher()) {
                 Teacher teacher = teacherRepository.findByUser(user);
                 if (teacher != null) {
                     Page<Timetable> timetablePage = timetableRepository.findByTimetableTeacher(teacher, pageRequest);
@@ -88,7 +91,7 @@ public class TimetableServiceImpl implements TimetableService {
         return allPages.getContent().stream()
                 .map(timetable -> {
                     try {
-                        return converter.convert(timetable);
+                        return converter.convertToDto(timetable);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Timetable to Dto");
@@ -99,7 +102,28 @@ public class TimetableServiceImpl implements TimetableService {
     @Override
     public TimetableDto findById(Integer id) throws ConvertException, NotFoundException {
         Timetable timetable = timetableRepository.findById(id).orElseThrow(NotFoundException::new);
-        TimetableDto timetableDto = converter.convert(timetable);
+        TimetableDto timetableDto = converter.convertToDto(timetable);
         return timetableDto;
+    }
+
+    @Override
+    public TimetableDto create(TimetableDto obj) {
+        Timetable timetable = converter.convertToEntity(obj);
+        timetableRepository.save(timetable);
+
+        List<Student> studentsByGroup = studentRepository.findByStudentGroup(timetable.getTimetableGroup());
+        List<Journal> journals = studentsByGroup.stream().map(student -> {
+            Journal journal = new Journal();
+            // TODO: 01.09.2018 Сделать дату по-человечески
+            journal.setJournalDate(new Date());
+            journal.setJournalTimetable(timetable);
+            journal.setJournalStudent(student);
+            journal.setJournalRating(null);
+            journal.setJournalSubject(timetable.getTimetableSubject());
+            return journal;
+        }).collect(Collectors.toList());
+
+        journalRepository.saveAll(journals);
+        return converter.convertToDto(timetable);
     }
 }
