@@ -12,6 +12,7 @@ import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
 import ru.digitaluniversity.exception.StreamConvertException;
 import ru.digitaluniversity.repository.StudentRepository;
+import ru.digitaluniversity.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private Converter<Student, StudentDto> converter;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public Page<StudentDto> findAll(Optional<Integer> page, Optional<Integer> size) {
@@ -59,6 +63,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDto create(StudentDto obj) {
-        return null;
+        Student student = converter.convertToEntity(obj);
+        userRepository.save(student.getUser());
+        return converter.convertToDto(student);
     }
 }

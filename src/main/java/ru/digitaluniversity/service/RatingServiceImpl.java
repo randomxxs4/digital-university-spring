@@ -10,6 +10,7 @@ import ru.digitaluniversity.dto.RatingDto;
 import ru.digitaluniversity.entity.Rating;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
+import ru.digitaluniversity.exception.NotImplementedMethodException;
 import ru.digitaluniversity.exception.StreamConvertException;
 import ru.digitaluniversity.repository.RatingRepostitory;
 
@@ -59,6 +60,6 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public RatingDto create(RatingDto obj) {
-        return null;
+        throw new NotImplementedMethodException();
     }
 }

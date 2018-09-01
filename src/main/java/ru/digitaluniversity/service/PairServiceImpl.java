@@ -10,6 +10,7 @@ import ru.digitaluniversity.dto.PairDto;
 import ru.digitaluniversity.entity.Pair;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
+import ru.digitaluniversity.exception.NotImplementedMethodException;
 import ru.digitaluniversity.exception.StreamConvertException;
 import ru.digitaluniversity.repository.PairRepository;
 
@@ -59,6 +60,6 @@ public class PairServiceImpl implements PairService {
 
     @Override
     public PairDto create(PairDto obj) {
-        return null;
+        throw new NotImplementedMethodException();
     }
 }

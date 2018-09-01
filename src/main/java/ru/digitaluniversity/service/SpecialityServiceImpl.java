@@ -61,6 +61,6 @@ public class SpecialityServiceImpl implements SpecialityService {
 
     @Override
     public SpecialityDto create(SpecialityDto obj) {
-        return null;
+        return converter.convertToDto(specialityRepository.save(converter.convertToEntity(obj)));
     }
 }

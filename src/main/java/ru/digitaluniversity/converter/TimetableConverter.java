@@ -21,7 +21,7 @@ public class TimetableConverter implements Converter<Timetable, TimetableDto> {
     private Converter<Group, GroupDto> groupConverter;
 
     @Autowired
-    private Converter<Subject, SubjectDto> subjectConverter;
+    private ManyToManyConverter<Subject, SubjectDto> subjectConverter;
 
     @Autowired
     private Converter<Day, DayDto> dayConverter;
@@ -36,18 +36,19 @@ public class TimetableConverter implements Converter<Timetable, TimetableDto> {
             timetableDto.setId(obj.getId().toString());
         }
         if (obj.getTimetableTeacher() != null) {
-            timetableDto.setTeacher(teacherConverter.convertToDto(obj.getTimetableTeacher()));
+            TeacherDto teacherDto = teacherConverter.convertToDto(obj.getTimetableTeacher());
+            timetableDto.setTeacher(teacherDto);
         }
-        if (obj.getTimetableJournal() != null && !obj.getTimetableJournal().isEmpty()) {
-            List<Journal> timetableJournals = obj.getTimetableJournal();
-            List<JournalDto> journalDtos = timetableJournals.stream().map(journal -> journalConverter.convertToDto(journal)).collect(Collectors.toList());
-            timetableDto.setJournals(journalDtos);
-        }
+//        if (obj.getTimetableJournal() != null && !obj.getTimetableJournal().isEmpty()) {
+//            List<Journal> timetableJournals = obj.getTimetableJournal();
+//            List<JournalDto> journalDtos = timetableJournals.stream().map(journal -> journalConverter.convertToDto(journal)).collect(Collectors.toList());
+//            timetableDto.setJournals(journalDtos);
+//        }
         if (obj.getTimetableGroup() != null) {
             timetableDto.setGroup(groupConverter.convertToDto(obj.getTimetableGroup()));
         }
         if (obj.getTimetableSubject() != null) {
-            timetableDto.setSubject(subjectConverter.convertToDto(obj.getTimetableSubject()));
+            timetableDto.setSubject(subjectConverter.convertManyToManyLink(obj.getTimetableSubject()));
         }
         if (obj.getTimetableDay() != null) {
             timetableDto.setDay(dayConverter.convertToDto(obj.getTimetableDay()));

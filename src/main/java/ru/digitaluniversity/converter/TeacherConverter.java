@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class TeacherConverter implements Converter<Teacher, TeacherDto> {
+public class TeacherConverter implements ManyToManyConverter<Teacher, TeacherDto> {
 
     @Autowired
-    private Converter<Position, PositionDto> positionConverter;
+    private ManyToManyConverter<Position, PositionDto> positionConverter;
 
     @Autowired
     private UserRepository userRepository;
@@ -31,7 +31,7 @@ public class TeacherConverter implements Converter<Teacher, TeacherDto> {
         }
         if (obj.getPositions() != null && !obj.getPositions().isEmpty()){
             List<Position> positions = obj.getPositions();
-            List<PositionDto> positionDtos = positions.stream().map((position -> positionConverter.convertToDto(position))).collect(Collectors.toList());
+            List<PositionDto> positionDtos = positions.stream().map((position -> positionConverter.convertManyToManyLink(position))).collect(Collectors.toList());
             teacherDto.setPositions(positionDtos);
         }
         if (obj.getUser() != null){
@@ -40,6 +40,7 @@ public class TeacherConverter implements Converter<Teacher, TeacherDto> {
             basicInfoDto.setSurname(obj.getUser().getSurname());
             basicInfoDto.setMiddlename(obj.getUser().getMiddlename());
             basicInfoDto.setName(obj.getUser().getName());
+            teacherDto.setBasicInfo(basicInfoDto);
         }
         return teacherDto;
     }
@@ -62,5 +63,10 @@ public class TeacherConverter implements Converter<Teacher, TeacherDto> {
             }
         }
         return teacher;
+    }
+
+    @Override
+    public TeacherDto convertManyToManyLink(Teacher obj) {
+        return null;
     }
 }

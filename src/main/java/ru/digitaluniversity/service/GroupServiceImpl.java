@@ -58,13 +58,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     public GroupDto create(GroupDto groupDto) {
-        Group newGroup = new Group();
-        newGroup.setTitle(groupDto.getTitle());
-        Group savedGroup = groupRepository.save(newGroup);
-        GroupDto result = new GroupDto();
-        result.setId(savedGroup.getId().toString());
-        result.setTitle(savedGroup.getTitle());
-        return result;
+        return converter.convertToDto(groupRepository.save(converter.convertToEntity(groupDto)));
     }
 }
 

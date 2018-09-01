@@ -16,7 +16,7 @@ public class JournalConverter implements Converter<Journal, JournalDto> {
     private Converter<Student, StudentDto> studentConverter;
 
     @Autowired
-    private Converter<Subject, SubjectDto> subjectConverter;
+    private ManyToManyConverter<Subject, SubjectDto> subjectConverter;
 
     @Autowired
     private Converter<Teacher, TeacherDto> teacherConverter;
@@ -40,7 +40,7 @@ public class JournalConverter implements Converter<Journal, JournalDto> {
             journalDto.setStudent(studentConverter.convertToDto(obj.getJournalStudent()));
         }
         if (obj.getJournalSubject() != null) {
-            journalDto.setSubject(subjectConverter.convertToDto(obj.getJournalSubject()));
+            journalDto.setSubject(subjectConverter.convertManyToManyLink(obj.getJournalSubject()));
         }
         if (obj.getJournalTimetable() != null) {
             journalDto.setTimetableTeacher(teacherConverter.convertToDto(obj.getJournalTimetable().getTimetableTeacher()));

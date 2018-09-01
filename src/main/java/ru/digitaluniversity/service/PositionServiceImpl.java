@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.digitaluniversity.converter.Converter;
+import ru.digitaluniversity.converter.ManyToManyConverter;
 import ru.digitaluniversity.dto.JournalDto;
 import ru.digitaluniversity.dto.PositionDto;
 import ru.digitaluniversity.entity.Journal;
@@ -29,16 +30,16 @@ public class PositionServiceImpl implements PositionService {
     private PositionRepository positionRepository;
 
     @Autowired
-    private Converter<Position, PositionDto> converter;
+    private ManyToManyConverter<Position, PositionDto> converter;
 
     @Override
     public Page<PositionDto> findAll(Optional<Integer> page, Optional<Integer> size) {
-        PageRequest pageRequest = new PageRequest(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
+        PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
         Page<Position> allPages = positionRepository.findAll(pageRequest);
         List<PositionDto> positionDtoList = allPages.getContent().stream()
                 .map(position -> {
                     try {
-                        return converter.convertToDto(position);
+                        return converter.convertManyToManyLink(position);
                     } catch (Exception e) {
                         e.printStackTrace();
                         throw new StreamConvertException("Could not convert Position to Dto");
@@ -52,7 +53,7 @@ public class PositionServiceImpl implements PositionService {
     public PositionDto findById(Integer id) throws ConvertException, NotFoundException {
         Position position = positionRepository.findById(id).get();
         if (position != null) {
-            PositionDto positionDto = converter.convertToDto(position);
+            PositionDto positionDto = converter.convertManyToManyLink(position);
             return positionDto;
         } else {
             throw new NotFoundException("Position not found");
@@ -61,6 +62,6 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public PositionDto create(PositionDto obj) {
-        return null;
+        return converter.convertManyToManyLink(positionRepository.save(converter.convertToEntity(obj)));
     }
 }

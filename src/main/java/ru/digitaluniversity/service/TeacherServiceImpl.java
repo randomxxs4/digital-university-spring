@@ -12,6 +12,7 @@ import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
 import ru.digitaluniversity.exception.StreamConvertException;
 import ru.digitaluniversity.repository.TeacherRepository;
+import ru.digitaluniversity.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +30,12 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private Converter<Teacher, TeacherDto> converter;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public Page<TeacherDto> findAll(Optional<Integer> page, Optional<Integer> size) {
-        PageRequest pageRequest = new PageRequest(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
+        PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
         Page<Teacher> allPages = teacherRepository.findAll(pageRequest);
         List<TeacherDto> teacherDtoList = allPages.getContent().stream()
                 .map(teacher -> {
@@ -59,6 +63,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public TeacherDto create(TeacherDto obj) {
-        return null;
+        Teacher teacher = converter.convertToEntity(obj);
+        userRepository.save(teacher.getUser());
+        return converter.convertToDto(teacher);
     }
 }

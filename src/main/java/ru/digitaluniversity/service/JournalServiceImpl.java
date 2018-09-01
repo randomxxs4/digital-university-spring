@@ -75,42 +75,34 @@ public class JournalServiceImpl implements JournalService {
     @Override
     public Page<JournalDto> findByRoleAndTimetable(Optional<Integer> page, Optional<Integer> size, Integer timetableId) throws Exception {
         PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
-        User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
-        if (user != null) {
-            Timetable timetable = timetableRepository.findById(timetableId).orElseThrow(NotFoundException :: new);
-                String userRole = authorizationService.getUserRole(user.getId());
-                if (AuthorizationService.STUDENT_ROLE.equals(userRole) || AuthorizationService.TEACHER_ROLE.equals(userRole)) {
-                    Page<Journal> journalPage = journalRepository.findByJournalTimetable(timetable, pageRequest);
-                    List<JournalDto> journalDtoList = getStreamConvert(journalPage);
-                    Page<JournalDto> result = new PageImpl<>(journalDtoList, pageRequest, journalPage.getTotalElements());
-                    return result;
-                }
-        }
-        throw new NotLogInException();
+        Timetable timetable = timetableRepository.findById(timetableId).orElseThrow(NotFoundException::new);
+        if (authorizationService.isStudent() || authorizationService.isAdmin() || authorizationService.isTeacher()) {
+            Page<Journal> journalPage = journalRepository.findByJournalTimetable(timetable, pageRequest);
+            List<JournalDto> journalDtoList = getStreamConvert(journalPage);
+            Page<JournalDto> result = new PageImpl<>(journalDtoList, pageRequest, journalPage.getTotalElements());
+            return result;
+        } else throw new NotLogInException();
     }
 
     @Override
-    public JournalDto updateRating(Integer id, String rating) throws ForbiddenException, NotFoundException, ConvertException, UnsupportedRoleException {
-        User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
-        if (user != null) {
-            String userRole = authorizationService.getUserRole(user.getId());
-            if (AuthorizationService.TEACHER_ROLE.equals(userRole)) {
-                Journal journal = journalRepository.findById(id).get();
-                if (journal != null) {
-                    Rating ratingObj = ratingRepostitory.findByRating(rating);
-                    if (ratingObj != null) {
-                        journal.setJournalRating(ratingObj);
-                        Journal savedJournal = journalRepository.save(journal);
-                        return converter.convertToDto(savedJournal);
-                    } else {
-                        throw new NotFoundException("Rating not found");
-                    }
+    public JournalDto updateRating(Integer id, String rating) throws NotFoundException, UnsupportedRoleException {
+        if (authorizationService.isTeacher() || authorizationService.isAdmin()) {
+            Journal journal = journalRepository.findById(id).get();
+            if (journal != null) {
+                Rating ratingObj = ratingRepostitory.findByRating(rating);
+                if (ratingObj != null) {
+                    journal.setJournalRating(ratingObj);
+                    Journal savedJournal = journalRepository.save(journal);
+                    return converter.convertToDto(savedJournal);
+                } else {
+                    throw new NotFoundException("Rating not found");
                 }
             } else {
-                throw new UnsupportedRoleException();
+                throw new NotFoundException("Journal not found");
             }
+        } else {
+            throw new UnsupportedRoleException();
         }
-        throw new NotLogInException("Journal not found");
     }
 
     @Override
@@ -123,7 +115,7 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
-    public JournalDto findById(Integer id) throws ConvertException, NotFoundException {
+    public JournalDto findById(Integer id) throws NotFoundException {
         Journal journal = journalRepository.findById(id).get();
         if (journal != null) {
             JournalDto journalDto = converter.convertToDto(journal);
@@ -131,11 +123,6 @@ public class JournalServiceImpl implements JournalService {
         } else {
             throw new NotFoundException("Journal not found");
         }
-    }
-
-    @Override
-    public JournalDto create(JournalDto obj) {
-        return null;
     }
 
     private List<JournalDto> getStreamConvert(Page<Journal> journalPage) {
@@ -171,5 +158,10 @@ public class JournalServiceImpl implements JournalService {
                         throw new StreamConvertException("Could not convert Journal to Dto");
                     }
                 }).collect(Collectors.toList());
+    }
+
+    @Override
+    public JournalDto create(JournalDto obj) {
+        return converter.convertToDto(journalRepository.save(converter.convertToEntity(obj)));
     }
 }
