@@ -19,6 +19,8 @@ public class Speciality {
     @ManyToOne
     private Faculty faculty;
 
+    private String description;
+
     public Speciality() {
     }
 
@@ -52,5 +54,13 @@ public class Speciality {
 
     public void setFaculty(Faculty faculty) {
         this.faculty = faculty;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
