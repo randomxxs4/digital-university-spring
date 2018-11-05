@@ -29,7 +29,7 @@ public class TokenController {
      */
     @PostMapping
     public TokenDto generateToken(@RequestBody TokenRequestData requestData) throws UnsupportedRoleException {
-        return authorizationService.generateToken(requestData, null);
+        return authorizationService.generateToken(requestData);
     }
 
     @GetMapping

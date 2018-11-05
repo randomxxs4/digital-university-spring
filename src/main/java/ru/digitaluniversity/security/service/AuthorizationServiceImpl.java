@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
 
-    private static final Long TIME_5_MIN = 300000L;
+    private static final Long TIME_10_MIN = 600000L;
 
     @Autowired
     private TokenRepository tokenRepository;
@@ -43,12 +43,12 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private RoleRepository roleRepository;
 
     @Override
-    public TokenDto generateToken(TokenRequestData requestData, HttpSession session) throws UnsupportedRoleException {
+    public TokenDto generateToken(TokenRequestData requestData) throws UnsupportedRoleException {
         User user = userRepository.findByUsername(requestData.getUsername());
         if (user != null) {
             if (user.getPassword().equals(requestData.getPassword())) {
                 long time = new Date().getTime();
-                Long expirationDate = time + TIME_5_MIN;
+                Long expirationDate = time + TIME_10_MIN;
                 String tokenString = "TOKEN" + user.getId() + expirationDate;
                 Token token = new Token();
                 token.setTokenString(tokenString);
@@ -57,11 +57,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                 tokenRepository.save(token);
                 AuthenticationToken authenticationToken = new AuthenticationToken(tokenString, user);
                 authProvider.authenticate(authenticationToken);
-                TokenDto tokenDto = new TokenDto();
-                tokenDto.setToken(tokenString);
-                tokenDto.setExpirationDate(expirationDate);
-                tokenDto.setUser(new UserDto(user.getId().toString(), user.getName(), user.getSurname(), user.getMiddlename(), user.getUsername()));
-                tokenDto.setRoles(getRoleDtos(user.getRoles()));
+                TokenDto tokenDto = new TokenDto(token);
                 tokenDto.setAuthenticated(true);
                 return tokenDto;
             }

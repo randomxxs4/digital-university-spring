@@ -1,5 +1,7 @@
 package ru.digitaluniversity.dto;
 
+import ru.digitaluniversity.entity.Speciality;
+
 /**
  * Класс, описывающий DTO сущности специальность.
  */
@@ -8,6 +10,11 @@ public class SpecialityDto {
     private String title;
 
     public SpecialityDto() {
+    }
+
+    public SpecialityDto(Speciality speciality) {
+        this.id = speciality.getId().toString();
+        this.title = speciality.getTitle();
     }
 
     public String getId() {

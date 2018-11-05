@@ -31,11 +31,10 @@ public interface AuthorizationService {
      * Generate token from TokenRequestData
      *
      * @param requestData the request data from form
-     * @param session     the session
      * @return the TokenDto
      * @throws UnsupportedRoleException the unsupported role exception
      */
-    TokenDto generateToken(TokenRequestData requestData, HttpSession session) throws UnsupportedRoleException;
+    TokenDto generateToken(TokenRequestData requestData) throws UnsupportedRoleException;
 
     /**
      * Cheack token id db.

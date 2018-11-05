@@ -1,5 +1,7 @@
 package ru.digitaluniversity.dto;
 
+import ru.digitaluniversity.entity.Rating;
+
 /**
  * Класс, описывающий DTO сущности оценки в журнале.
  */
@@ -8,6 +10,11 @@ public class RatingDto {
     private String rating;
 
     public RatingDto() {
+    }
+
+    public RatingDto(Rating rating) {
+        this.id = rating.getId().toString();
+        this.rating = rating.getRating();
     }
 
     public String getId() {

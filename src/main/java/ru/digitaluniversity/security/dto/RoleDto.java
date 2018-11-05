@@ -1,5 +1,7 @@
 package ru.digitaluniversity.security.dto;
 
+import ru.digitaluniversity.security.entity.UserRole;
+
 public class RoleDto {
     private String id;
     private String role;
@@ -10,6 +12,11 @@ public class RoleDto {
     public RoleDto(String id, String role) {
         this.id = id;
         this.role = role;
+    }
+
+    public RoleDto(UserRole role) {
+        this.id = role.getId().toString();
+        this.role = role.getRole();
     }
 
     public String getId() {

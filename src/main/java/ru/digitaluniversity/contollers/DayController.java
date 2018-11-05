@@ -1,14 +1,16 @@
 package ru.digitaluniversity.contollers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.digitaluniversity.dto.DayDto;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
 import ru.digitaluniversity.services.interfaces.DayService;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * The type Day controller.
@@ -23,15 +25,11 @@ public class DayController {
     /**
      * Search for all Day entity data
      *
-     * @param page page number
-     * @param size page size
      * @return page
      */
     @GetMapping("/all")
-    public List<DayDto> findAll(
-            @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size) {
-        return dataService.findAll(page, size).getContent();
+    public List<DayDto> findAll() {
+        return dataService.findAll();
     }
 
     /**

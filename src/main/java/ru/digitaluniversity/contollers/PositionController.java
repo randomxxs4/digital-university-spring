@@ -41,7 +41,7 @@ public class PositionController {
     }
 
     @PostMapping
-    public PositionDto createPosition(@RequestBody PositionDto positionDto){
+    public PositionDto createPosition(@RequestBody PositionDto positionDto) {
         return dataService.create(positionDto);
     }
 }

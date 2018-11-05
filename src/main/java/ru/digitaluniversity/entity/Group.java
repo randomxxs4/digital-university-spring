@@ -1,6 +1,7 @@
 package ru.digitaluniversity.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * The type Group.
@@ -12,6 +13,9 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String title;
+    @OneToMany
+    @JoinColumn(name = "student_group_id", referencedColumnName = "id")
+    private List<Student> students;
 
     public Group() {
     }
@@ -30,5 +34,13 @@ public class Group {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
 }

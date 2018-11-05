@@ -1,7 +1,6 @@
 package ru.digitaluniversity.contollers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.digitaluniversity.dto.JournalDto;
@@ -14,7 +13,6 @@ import ru.digitaluniversity.security.dto.Message;
 import ru.digitaluniversity.services.interfaces.JournalService;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * The type Journal controller.
@@ -25,21 +23,6 @@ public class JournalController {
 
     @Autowired
     private JournalService dataService;
-
-//    /**
-//     * Search for all Journal entity data
-//     *
-//     * @param page page number
-//     * @param size page size
-//     * @return page
-//     */
-//    @GetMapping("/all")
-//    public Page<JournalDto> findAll(
-//            @RequestParam("page") Optional<Integer> page,
-//            @RequestParam("size") Optional<Integer> size
-//    ) {
-//        return dataService.findAll(page, size);
-//    }
 
     @GetMapping("/all")
     public List<JournalDto> findAll() {
@@ -79,15 +62,6 @@ public class JournalController {
     @PostMapping
     public JournalDto updateRating(@RequestBody RatingRequestData ratingRequestData) throws Exception {
         return dataService.updateRating(Integer.parseInt(ratingRequestData.getId()), ratingRequestData.getRating());
-    }
-
-    @GetMapping("/find")
-    public Page<JournalDto> findJournalsByTimetableAndRole(
-            @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size,
-            @RequestParam("timetableId") Integer id
-    ) throws Exception {
-        return dataService.findByRoleAndTimetable(page, size, id);
     }
 
     /**

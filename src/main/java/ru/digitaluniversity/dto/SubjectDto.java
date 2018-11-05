@@ -1,14 +1,23 @@
 package ru.digitaluniversity.dto;
 
+import ru.digitaluniversity.entity.Subject;
+
+import java.util.Optional;
+
 /**
  * Класс, описывающий DTO сущности предмет.
  */
 public class SubjectDto {
     private String id;
     private String title;
-    private PositionDto position;
+
 
     public SubjectDto() {
+    }
+
+    public SubjectDto(Subject subject) {
+        this.id = subject.getId().toString();
+        this.title = subject.getTitle();
     }
 
     public String getId() {
@@ -25,13 +34,5 @@ public class SubjectDto {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public PositionDto getPosition() {
-        return position;
-    }
-
-    public void setPosition(PositionDto position) {
-        this.position = position;
     }
 }

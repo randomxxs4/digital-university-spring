@@ -1,5 +1,7 @@
 package ru.digitaluniversity.dto;
 
+import ru.digitaluniversity.entity.User;
+
 /**
  * The type Basic info dto.
  */
@@ -10,6 +12,13 @@ public class BasicInfoDto {
     private String middlename;
 
     public BasicInfoDto() {
+    }
+
+    public BasicInfoDto(User user) {
+        this.id = user.getId().toString();
+        this.name = user.getName();
+        this.surname = user.getSurname();
+        this.middlename = user.getMiddlename();
     }
 
     public String getId() {
@@ -43,4 +52,6 @@ public class BasicInfoDto {
     public void setMiddlename(String middlename) {
         this.middlename = middlename;
     }
+
+
 }

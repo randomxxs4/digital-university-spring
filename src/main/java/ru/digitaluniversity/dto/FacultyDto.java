@@ -3,6 +3,7 @@ package ru.digitaluniversity.dto;
 import ru.digitaluniversity.entity.Faculty;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FacultyDto {
     private String id;
@@ -21,5 +22,10 @@ public class FacultyDto {
     }
 
     public FacultyDto(Faculty faculty) {
+        this.id = faculty.getId().toString();
+        this.name = faculty.getName();
+        this.description = faculty.getDescription();
+        this.specialities = faculty.getSpecialities()
+                .stream().map(SpecialityDto::new).collect(Collectors.toList());
     }
 }

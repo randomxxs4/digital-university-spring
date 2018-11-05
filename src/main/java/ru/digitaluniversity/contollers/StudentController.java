@@ -1,7 +1,6 @@
 package ru.digitaluniversity.contollers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import ru.digitaluniversity.dto.StudentDto;
 import ru.digitaluniversity.exception.ConvertException;
@@ -9,7 +8,6 @@ import ru.digitaluniversity.exception.NotFoundException;
 import ru.digitaluniversity.services.interfaces.StudentService;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * The type Student controller.
@@ -20,21 +18,6 @@ public class StudentController {
 
     @Autowired
     private StudentService dataService;
-
-    /**
-     * Search for all Student entity data.
-     *
-     * @param page page number
-     * @param size page size
-     * @return page
-     */
-    @GetMapping("/page/all")
-    public Page<StudentDto> findAll(
-            @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size
-    ) {
-        return dataService.findAll(page, size);
-    }
 
     @GetMapping("/all")
     public List<StudentDto> findAll() {
@@ -54,7 +37,7 @@ public class StudentController {
     }
 
     @PostMapping
-    public StudentDto createStudent(@RequestBody StudentDto studentDto){
+    public StudentDto createStudent(@RequestBody StudentDto studentDto) {
         return dataService.create(studentDto);
     }
 }
