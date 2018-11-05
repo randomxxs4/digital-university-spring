@@ -12,7 +12,7 @@
 //import ru.digitaluniversity.entity.Teacher;
 //import ru.digitaluniversity.repository.StudentRepository;
 //import ru.digitaluniversity.repository.TeacherRepository;
-//import ru.digitaluniversity.service.UserInfoService;
+//import ru.digitaluniversity.services.interfaces.UserInfoService;
 //
 //import static org.hamcrest.Matchers.is;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

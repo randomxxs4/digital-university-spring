@@ -22,8 +22,8 @@
 //import ru.digitaluniversity.repository.TeacherRepository;
 //import ru.digitaluniversity.repository.TimetableRepository;
 //import ru.digitaluniversity.serializer.JsonSerializer;
-//import ru.digitaluniversity.service.JournalService;
-//import ru.digitaluniversity.service.JournalServiceImpl;
+//import ru.digitaluniversity.services.interfaces.JournalService;
+//import ru.digitaluniversity.services.JournalServiceImpl;
 //
 //import java.util.List;
 //
