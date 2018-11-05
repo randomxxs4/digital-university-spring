@@ -1,6 +1,9 @@
 package ru.digitaluniversity.dto;
 
+import ru.digitaluniversity.entity.Position;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Класс, описывающий DTO сущности должность преподавателя.
@@ -11,6 +14,12 @@ public class PositionDto {
     private List<SubjectDto> subjects;
 
     public PositionDto() {
+    }
+
+    public PositionDto(Position position) {
+        this.id = position.getId().toString();
+        this.title = position.getTitle();
+        this.subjects = position.getSubjects().stream().map(SubjectDto::new).collect(Collectors.toList());
     }
 
     public String getId() {

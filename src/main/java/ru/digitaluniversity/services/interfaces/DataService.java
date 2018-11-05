@@ -1,10 +1,9 @@
 package ru.digitaluniversity.services.interfaces;
 
-import org.springframework.data.domain.Page;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
 
-import java.util.Optional;
+import java.util.List;
 
 
 /**
@@ -13,14 +12,7 @@ import java.util.Optional;
  * @param <T> the type parameter
  */
 public interface DataService<T> {
-    /**
-     * Find all data
-     *
-     * @param page the page
-     * @param size the size
-     * @return the page
-     */
-    Page<T> findAll(Optional<Integer> page, Optional<Integer> size);
+    List<T> findAll();
 
     /**
      * Find data by id

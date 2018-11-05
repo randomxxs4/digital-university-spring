@@ -42,7 +42,7 @@ public class SpecialityController {
     }
 
     @PostMapping
-    public SpecialityDto createSpeciality(@RequestBody SpecialityDto specialityDto){
+    public SpecialityDto createSpeciality(@RequestBody SpecialityDto specialityDto) {
         return dataService.create(specialityDto);
     }
 }

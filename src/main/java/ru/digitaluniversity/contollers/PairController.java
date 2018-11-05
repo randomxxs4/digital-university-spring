@@ -23,16 +23,11 @@ public class PairController {
     /**
      * Search for all Pair entity data
      *
-     * @param page page number
-     * @param size page size
      * @return page
      */
     @GetMapping("/all")
-    public List<PairDto> findAll(
-            @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size
-    ) {
-        return dataService.findAll(page, size).getContent();
+    public List<PairDto> findAll() {
+        return dataService.findAll();
     }
 
     /**

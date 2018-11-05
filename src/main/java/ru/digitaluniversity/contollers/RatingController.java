@@ -29,7 +29,7 @@ public class RatingController {
      */
     @GetMapping
     public List<RatingDto> findAll() {
-        return dataService.findAllDay();
+        return dataService.findAll();
     }
 
     /**

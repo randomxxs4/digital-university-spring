@@ -21,26 +21,11 @@ import java.util.List;
 public class TimetableController {
 
     @Autowired
-    private TimetableService sitexService;
-
-//    /**
-//     * Find all timetables
-//     *
-//     * @param page page number
-//     * @param size page size
-//     * @return the page
-//     */
-//    @GetMapping("/all")
-//    public Page<TimetableDto> findAll(
-//            @RequestParam("page") Optional<Integer> page,
-//            @RequestParam("size") Optional<Integer> size
-//    ) {
-//        return sitexService.findAll(page, size);
-//    }
+    private TimetableService dataService;
 
     @GetMapping("/all")
     public List<TimetableDto> findAll() {
-        return sitexService.findAll();
+        return dataService.findAll();
     }
 
     /**
@@ -50,7 +35,7 @@ public class TimetableController {
      */
     @GetMapping
     public List<TimetableDto> findByRole() {
-        return sitexService.findTimetableByRole();
+        return dataService.findTimetableByRole();
     }
 
     /**
@@ -62,12 +47,12 @@ public class TimetableController {
      */
     @GetMapping("/{id}")
     public TimetableDto findTimetableById(@PathVariable("id") Integer id) throws Exception {
-        return sitexService.findById(id);
+        return dataService.findById(id);
     }
 
     @PostMapping
     public TimetableDto createTimetable(@RequestBody TimetableDto timetableDto) {
-        return sitexService.create(timetableDto);
+        return dataService.create(timetableDto);
     }
 
     /**

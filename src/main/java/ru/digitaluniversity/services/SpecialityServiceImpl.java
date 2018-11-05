@@ -1,58 +1,27 @@
 package ru.digitaluniversity.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.digitaluniversity.converter.Converter;
 import ru.digitaluniversity.dto.SpecialityDto;
 import ru.digitaluniversity.entity.Speciality;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
-import ru.digitaluniversity.exception.StreamConvertException;
 import ru.digitaluniversity.repository.SpecialityRepository;
 import ru.digitaluniversity.services.interfaces.SpecialityService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class SpecialityServiceImpl implements SpecialityService {
-
-    private static final int DEFAULT_PAGE_NUMBER = 0;
-    private static final int DEFAULT_PAGE_SIZE = 5;
-
     @Autowired
     private SpecialityRepository specialityRepository;
-
-    @Autowired
-    private Converter<Speciality, SpecialityDto> converter;
-
-    @Override
-    public Page<SpecialityDto> findAll(Optional<Integer> page, Optional<Integer> size) {
-        PageRequest pageRequest = new PageRequest(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
-        Page<Speciality> allPages = specialityRepository.findAll(pageRequest);
-        List<SpecialityDto> specialityDtoList = allPages.getContent().stream()
-                .map(speciality -> {
-                    try {
-                        return converter.convertToDto(speciality);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new StreamConvertException("Could not convert Speciality to Dto");
-                    }
-                }).collect(Collectors.toList());
-        Page<SpecialityDto> result = new PageImpl<>(specialityDtoList, pageRequest, allPages.getTotalElements());
-        return result;
-    }
 
     @Override
     public SpecialityDto findById(Integer id) throws ConvertException, NotFoundException {
         Speciality speciality = specialityRepository.findById(id).get();
         if (speciality != null) {
-            SpecialityDto specialityDto = converter.convertToDto(speciality);
-            return specialityDto;
+            return new SpecialityDto(speciality);
         } else {
             throw new NotFoundException("Speciality not found");
         }
@@ -60,15 +29,14 @@ public class SpecialityServiceImpl implements SpecialityService {
 
     @Override
     public SpecialityDto create(SpecialityDto obj) {
-        return converter.convertToDto(specialityRepository.save(converter.convertToEntity(obj)));
+        return null;
     }
 
     @Override
     public List<SpecialityDto> findAll() {
         List<Speciality> all = specialityRepository.findAll();
         List<SpecialityDto> result = all.stream()
-                .map(speciality ->
-                        converter.convertToDto(speciality))
+                .map(SpecialityDto::new)
                 .collect(Collectors.toList());
         return result;
     }

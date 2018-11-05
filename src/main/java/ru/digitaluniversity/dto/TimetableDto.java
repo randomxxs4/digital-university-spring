@@ -1,6 +1,10 @@
 package ru.digitaluniversity.dto;
 
+import ru.digitaluniversity.entity.Timetable;
+
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Класс, описывающий DTO сущности расписание.
@@ -15,6 +19,22 @@ public class TimetableDto {
     private List<JournalDto> journals;
 
     public TimetableDto() {
+    }
+
+    public TimetableDto(Timetable timetable) {
+        this.id = timetable.getId().toString();
+        this.teacher = Optional.ofNullable(timetable.getTimetableTeacher())
+                .map(TeacherDto::new).orElse(null);
+        this.group = Optional.ofNullable(timetable.getTimetableGroup())
+                .map(GroupDto::new).orElse(null);
+        this.subject = Optional.ofNullable(timetable.getTimetableSubject())
+                .map(SubjectDto::new).orElse(null);
+        this.day = Optional.ofNullable(timetable.getTimetableDay())
+                .map(DayDto::new).orElse(null);
+        this.pair = Optional.ofNullable(timetable.getTimetablePair())
+                .map(PairDto::new).orElse(null);
+        this.journals = timetable.getTimetableJournal()
+                .stream().map(JournalDto::new).collect(Collectors.toList());
     }
 
     public String getId() {

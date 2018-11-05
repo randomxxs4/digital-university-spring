@@ -1,5 +1,7 @@
 package ru.digitaluniversity.security.dto;
 
+import ru.digitaluniversity.entity.User;
+
 public class UserDto {
     private String id;
     private String name;
@@ -16,6 +18,14 @@ public class UserDto {
         this.surname = surname;
         this.middlename = middlename;
         this.username = username;
+    }
+
+    public UserDto(User user) {
+        this.id = user.getId().toString();
+        this.name = user.getName();
+        this.surname = user.getSurname();
+        this.middlename = user.getMiddlename();
+        this.username = user.getUsername();
     }
 
     public String getId() {

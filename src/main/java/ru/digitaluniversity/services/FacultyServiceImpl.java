@@ -1,9 +1,9 @@
 package ru.digitaluniversity.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 import ru.digitaluniversity.dto.FacultyDto;
-import ru.digitaluniversity.exception.ConvertException;
+import ru.digitaluniversity.entity.Faculty;
 import ru.digitaluniversity.exception.NotFoundException;
 import ru.digitaluniversity.repository.FacultyRepository;
 import ru.digitaluniversity.services.interfaces.FacultyService;
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class FacultyServiceImpl implements FacultyService {
 
     @Autowired
@@ -23,13 +24,13 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Page<FacultyDto> findAll(Optional<Integer> page, Optional<Integer> size) {
-        return null;
-    }
-
-    @Override
-    public FacultyDto findById(Integer id) throws ConvertException, NotFoundException {
-        return null;
+    public FacultyDto findById(Integer id) throws NotFoundException {
+        Optional<Faculty> faculty = facultyRepository.findById(id);
+        if (faculty.isPresent()) {
+            return new FacultyDto(faculty.get());
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override

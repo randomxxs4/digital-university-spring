@@ -1,15 +1,29 @@
 package ru.digitaluniversity.dto;
 
+import ru.digitaluniversity.entity.Student;
+
+import java.util.Optional;
+
 /**
  * Класс, описывающий DTO сущности студента.
  */
 public class StudentDto {
     private String id;
-    private BasicInfoDto basicInfoDto;
+    private BasicInfoDto basicInfo;
     private SpecialityDto studentSpeciality;
     private GroupDto studentGroup;
 
     public StudentDto() {
+    }
+
+    public StudentDto(Student student){
+        this.id = student.getId().toString();
+        this.basicInfo = Optional.ofNullable(student.getUser())
+                .map(BasicInfoDto::new).orElse(null);
+        this.studentSpeciality = Optional.ofNullable(student.getStudentSpeciality())
+                .map(SpecialityDto::new).orElse(null);
+        this.studentGroup = Optional.ofNullable(student.getStudentGroup())
+                .map(GroupDto::new).orElse(null);
     }
 
     public String getId() {
@@ -37,10 +51,10 @@ public class StudentDto {
     }
 
     public BasicInfoDto getBasicInfo() {
-        return basicInfoDto;
+        return basicInfo;
     }
 
     public void setBasicInfo(BasicInfoDto basicInfo) {
-        this.basicInfoDto = basicInfo;
+        this.basicInfo = basicInfo;
     }
 }

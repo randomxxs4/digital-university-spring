@@ -1,7 +1,12 @@
 package ru.digitaluniversity.dto;
 
+import ru.digitaluniversity.entity.Journal;
+import ru.digitaluniversity.entity.Rating;
+import ru.digitaluniversity.entity.Subject;
+
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * Класс, описывающий DTO сущности журнал.
@@ -12,13 +17,22 @@ public class JournalDto {
     private StudentDto student;
     private RatingDto rating;
     private TeacherDto timetableTeacher;
-//    private String date;
     private Date date;
-    private TimetableDto timetable;
-
-    private final DateTimeFormatter DATE_PATTERN = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     public JournalDto() {
+    }
+
+    public JournalDto(Journal journal) {
+        this.id = journal.getId().toString();
+        this.subject = Optional.ofNullable(journal.getJournalSubject())
+                .map(SubjectDto::new).orElse(null);
+        this.student = Optional.ofNullable(journal.getJournalStudent())
+                .map(StudentDto::new).orElse(null);
+        this.rating = Optional.ofNullable(journal.getJournalRating())
+                .map(RatingDto::new).orElse(null);
+        this.timetableTeacher = Optional.ofNullable(journal.getJournalTimetable().getTimetableTeacher())
+                .map(TeacherDto::new).orElse(null);
+        this.date = journal.getJournalDate();
     }
 
     public String getId() {
@@ -60,15 +74,6 @@ public class JournalDto {
     public void setTimetableTeacher(TeacherDto timetableTeacher) {
         this.timetableTeacher = timetableTeacher;
     }
-//
-//    public String getDate() {
-//        return date;
-//    }
-//
-//    public void setDate(Date date) {
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-//        this.date = simpleDateFormat.format(date);
-//    }
 
     public Date getDate() {
         return date;
@@ -76,13 +81,5 @@ public class JournalDto {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public TimetableDto getTimetable() {
-        return timetable;
-    }
-
-    public void setTimetable(TimetableDto timetable) {
-        this.timetable = timetable;
     }
 }
