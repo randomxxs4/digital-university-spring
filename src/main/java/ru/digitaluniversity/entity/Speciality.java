@@ -16,6 +16,8 @@ public class Speciality {
 
     @OneToMany(mappedBy = "studentSpeciality")
     private List<Student> students;
+    @ManyToOne
+    private Faculty faculty;
 
     public Speciality() {
     }
@@ -42,5 +44,13 @@ public class Speciality {
 
     public void setStudents(List<Student> students) {
         this.students = students;
+    }
+
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
     }
 }
