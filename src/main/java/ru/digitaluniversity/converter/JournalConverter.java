@@ -6,6 +6,8 @@ import ru.digitaluniversity.dto.*;
 import ru.digitaluniversity.entity.*;
 import ru.digitaluniversity.exception.ConvertException;
 
+import java.util.Date;
+
 @Service
 public class JournalConverter implements Converter<Journal, JournalDto> {
 
@@ -69,7 +71,7 @@ public class JournalConverter implements Converter<Journal, JournalDto> {
             journal.setJournalTimetable(timetableConverter.convertToEntity(obj.getTimetable()));
         }
         if (obj.getDate() != null) {
-            journal.setJournalDate(obj.getDate());
+            journal.setJournalDate(new Date());
         }
         return journal;
     }

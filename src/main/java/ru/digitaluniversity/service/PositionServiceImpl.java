@@ -50,7 +50,7 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
-    public PositionDto findById(Integer id) throws ConvertException, NotFoundException {
+    public PositionDto findById(Integer id) throws NotFoundException {
         Position position = positionRepository.findById(id).get();
         if (position != null) {
             PositionDto positionDto = converter.convertManyToManyLink(position);
@@ -63,5 +63,15 @@ public class PositionServiceImpl implements PositionService {
     @Override
     public PositionDto create(PositionDto obj) {
         return converter.convertManyToManyLink(positionRepository.save(converter.convertToEntity(obj)));
+    }
+
+    @Override
+    public List<PositionDto> findAll() {
+        List<Position> all = positionRepository.findAll();
+        List<PositionDto> result = all.stream()
+                .map(position ->
+                        converter.convertManyToManyLink(position))
+                .collect(Collectors.toList());
+        return result;
     }
 }

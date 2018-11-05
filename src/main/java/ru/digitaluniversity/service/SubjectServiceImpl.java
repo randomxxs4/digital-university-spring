@@ -35,20 +35,14 @@ public class SubjectServiceImpl implements SubjectService {
         PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
         Page<Subject> allPages = subjectRepository.findAll(pageRequest);
         List<SubjectDto> subjectDtoList = allPages.getContent().stream()
-                .map(subject -> {
-                    try {
-                        return converter.convertManyToManyLink(subject);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new StreamConvertException("Could not convert Subject to Dto");
-                    }
-                }).collect(Collectors.toList());
+                .map(subject -> converter.convertManyToManyLink(subject))
+                .collect(Collectors.toList());
         Page<SubjectDto> result = new PageImpl<>(subjectDtoList, pageRequest, allPages.getTotalElements());
         return result;
     }
 
     @Override
-    public SubjectDto findById(Integer id) throws ConvertException, NotFoundException {
+    public SubjectDto findById(Integer id) throws NotFoundException {
         Subject subject = subjectRepository.findById(id).get();
         if (subject != null) {
             SubjectDto subjectDto = converter.convertManyToManyLink(subject);
@@ -61,5 +55,13 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public SubjectDto create(SubjectDto obj) {
         return converter.convertManyToManyLink(subjectRepository.save(converter.convertToEntity(obj)));
+    }
+
+    @Override
+    public List<SubjectDto> findAll() {
+        List<Subject> all = subjectRepository.findAll();
+        return all.stream()
+                .map(subject -> converter.convertManyToManyLink(subject))
+                .collect(Collectors.toList());
     }
 }

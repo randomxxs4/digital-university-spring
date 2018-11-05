@@ -17,13 +17,8 @@ public class Teacher{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
-            mappedBy = "teachers")
-    private List<Position> positions;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Position position;
 
     public Teacher() {
     }
@@ -44,11 +39,11 @@ public class Teacher{
         this.user = user;
     }
 
-    public List<Position> getPositions() {
-        return positions;
+    public Position getPosition() {
+        return position;
     }
 
-    public void setPositions(List<Position> positions) {
-        this.positions = positions;
+    public void setPosition(Position position) {
+        this.position = position;
     }
 }

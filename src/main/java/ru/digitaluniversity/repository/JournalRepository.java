@@ -8,11 +8,15 @@ import ru.digitaluniversity.entity.Journal;
 import ru.digitaluniversity.entity.Student;
 import ru.digitaluniversity.entity.Timetable;
 
+import java.util.List;
+
 @Repository
 public interface JournalRepository extends JpaRepository<Journal, Integer> {
     Page<Journal> findByJournalStudent(Student student, Pageable pageable);
 
-    Page<Journal> findByJournalTimetable(Timetable timetable, Pageable pageable);
+    List<Journal> findByJournalStudent(Student student);
 
-    Journal findByJournalTimetable(Timetable timetable);
+    List<Journal> findByJournalTimetable(Timetable timetable);
+
+    Page<Journal> findByJournalTimetable(Timetable timetable, Pageable pageable);
 }

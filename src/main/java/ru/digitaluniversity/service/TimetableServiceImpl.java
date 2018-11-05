@@ -7,8 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.digitaluniversity.converter.Converter;
-import ru.digitaluniversity.dto.JournalDto;
-import ru.digitaluniversity.dto.TeacherDto;
 import ru.digitaluniversity.dto.TimetableDto;
 import ru.digitaluniversity.entity.*;
 import ru.digitaluniversity.exception.ConvertException;
@@ -22,6 +20,7 @@ import ru.digitaluniversity.repository.TimetableRepository;
 import ru.digitaluniversity.security.component.AuthenticationToken;
 import ru.digitaluniversity.security.service.AuthorizationService;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -79,6 +78,40 @@ public class TimetableServiceImpl implements TimetableService {
     }
 
     @Override
+    public List<TimetableDto> findTimetableByRole() {
+        User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
+        if (user != null) {
+            if (authorizationService.isStudent()) {
+                Student student = studentRepository.findByUser(user);
+                if (student != null) {
+                    List<Timetable> timetablePage = timetableRepository.findByTimetableGroup(student.getStudentGroup())
+                            .stream().sorted(Comparator.comparingInt(o -> o.getTimetableDay().getId()))
+                            .collect(Collectors.toList());
+                    List<TimetableDto> timetableDtoList = getStreamConvert(timetablePage);
+                    return timetableDtoList;
+                }
+            }
+            if (authorizationService.isTeacher()) {
+                Teacher teacher = teacherRepository.findByUser(user);
+                if (teacher != null) {
+                    List<Timetable> timetablePage = timetableRepository.findByTimetableTeacher(teacher)
+                            .stream().sorted(Comparator.comparingInt(o -> o.getTimetableDay().getId()))
+                            .collect(Collectors.toList());
+                    List<TimetableDto> timetableDtoList = getStreamConvert(timetablePage);
+                    return timetableDtoList;
+                }
+            }
+        }
+        throw new NotLogInException();
+    }
+
+    @Override
+    public List<TimetableDto> findAll() {
+        return timetableRepository.findAll().stream().map(item ->
+                converter.convertToDto(item)).collect(Collectors.toList());
+    }
+
+    @Override
     public Page<TimetableDto> findAll(Optional<Integer> page, Optional<Integer> size) {
         PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
         Page<Timetable> allPages = timetableRepository.findAll(pageRequest);
@@ -98,6 +131,19 @@ public class TimetableServiceImpl implements TimetableService {
                     }
                 }).collect(Collectors.toList());
     }
+
+    private List<TimetableDto> getStreamConvert(List<Timetable> list) {
+        return list.stream()
+                .map(timetable -> {
+                    try {
+                        return converter.convertToDto(timetable);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new StreamConvertException("Could not convert Timetable to Dto");
+                    }
+                }).collect(Collectors.toList());
+    }
+
 
     @Override
     public TimetableDto findById(Integer id) throws ConvertException, NotFoundException {

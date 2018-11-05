@@ -29,10 +29,8 @@ public class TeacherConverter implements ManyToManyConverter<Teacher, TeacherDto
         if (obj.getId() != null){
             teacherDto.setId(obj.getId().toString());
         }
-        if (obj.getPositions() != null && !obj.getPositions().isEmpty()){
-            List<Position> positions = obj.getPositions();
-            List<PositionDto> positionDtos = positions.stream().map((position -> positionConverter.convertManyToManyLink(position))).collect(Collectors.toList());
-            teacherDto.setPositions(positionDtos);
+        if (obj.getPosition() != null){
+            teacherDto.setPosition(positionConverter.convertManyToManyLink(obj.getPosition()));
         }
         if (obj.getUser() != null){
             BasicInfoDto basicInfoDto = new BasicInfoDto();
@@ -51,10 +49,8 @@ public class TeacherConverter implements ManyToManyConverter<Teacher, TeacherDto
         if (obj.getId() != null) {
             teacher.setId(Integer.parseInt(obj.getId()));
         }
-        if (obj.getPositions() != null && !obj.getPositions().isEmpty()){
-            List<PositionDto> positionDtos = obj.getPositions();
-            List<Position> positions = positionDtos.stream().map(positionDto -> positionConverter.convertToEntity(positionDto)).collect(Collectors.toList());
-            teacher.setPositions(positions);
+        if (obj.getPosition() != null){
+            teacher.setPosition(positionConverter.convertToEntity(obj.getPosition()));
         }
         if (obj.getBasicInfo() != null) {
             User bySurname = userRepository.findBySurname(obj.getBasicInfo().getSurname());

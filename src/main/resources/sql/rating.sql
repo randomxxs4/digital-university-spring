@@ -4,5 +4,5 @@ INSERT INTO ratings (id, rating) VALUES
   (3, '3'),
   (4, '4'),
   (5, '5'),
-  (6, 'y'),
+  (6, 'н'),
   (7, ' ');
