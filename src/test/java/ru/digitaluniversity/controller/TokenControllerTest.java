@@ -56,7 +56,7 @@ public class TokenControllerTest extends SpringUniversityApplicationTests {
                 .andReturn().getResponse().getContentAsString();
 
         TokenDto tokenDto = (TokenDto) JsonSerializer.fromJSON(contentAsString, TokenDto.class);
-        Token byTokenString = tokenRepository.findByTokenString(tokenDto.getTokenString());
+        Token byTokenString = tokenRepository.findByTokenString(tokenDto.getToken());
         assertNotNull(byTokenString);
     }
 
@@ -76,7 +76,7 @@ public class TokenControllerTest extends SpringUniversityApplicationTests {
                 .andReturn().getResponse().getContentAsString();
 
         TokenDto tokenDto = (TokenDto) JsonSerializer.fromJSON(contentAsString, TokenDto.class);
-        Token byTokenString = tokenRepository.findByTokenString(tokenDto.getTokenString());
+        Token byTokenString = tokenRepository.findByTokenString(tokenDto.getToken());
         assertNotNull(byTokenString);
     }
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.digitaluniversity.converter.Converter;
 import ru.digitaluniversity.dto.TeacherDto;
 import ru.digitaluniversity.entity.Teacher;
+import ru.digitaluniversity.entity.User;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
 import ru.digitaluniversity.exception.StreamConvertException;
@@ -52,7 +53,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public TeacherDto findById(Integer id) throws ConvertException, NotFoundException {
-        Teacher teacher = teacherRepository.findById(id).get();
+        User user = userRepository.findById(id).get();
+        Teacher teacher = teacherRepository.findByUser(user);
         if (teacher != null) {
             TeacherDto teacherDto = converter.convertToDto(teacher);
             return teacherDto;

@@ -28,13 +28,11 @@ public class PositionConverter implements ManyToManyConverter<Position, Position
             positionDto.setTitle(obj.getTitle());
         }
         if (obj.getSubjects() != null && !obj.getSubjects().isEmpty()) {
-            List<Subject> subjects = obj.getSubjects();
-            List<SubjectDto> subjectDtos = new ArrayList<>();
-            for (int i = 0; i < subjects.size(); i++) {
-                Subject subject = subjects.get(i);
-                subjectDtos.add(subjectConverter.convertToDto(subject));
-            }
-            positionDto.setSubjects(subjectDtos);
+            positionDto.setSubjects(obj.getSubjects().stream()
+                    .map(item -> subjectConverter.convertToDto(item))
+                    .collect(Collectors.toList()));
+        } else {
+            positionDto.setSubjects(new ArrayList<>());
         }
         return positionDto;
     }
@@ -58,29 +56,6 @@ public class PositionConverter implements ManyToManyConverter<Position, Position
 
     @Override
     public PositionDto convertManyToManyLink(Position obj) {
-        PositionDto positionDto = new PositionDto();
-        if (obj.getId() != null) {
-            positionDto.setId(obj.getId().toString());
-        }
-        if (obj.getTitle() != null) {
-            positionDto.setTitle(obj.getTitle());
-        }
-        if (obj.getSubjects() != null && !obj.getSubjects().isEmpty()) {
-            List<Subject> subjects = obj.getSubjects();
-            ArrayList<SubjectDto> subjectDtos = new ArrayList<>();
-            for (int i = 0; i < subjects.size(); i++) {
-                Subject subject = subjects.get(i);
-                SubjectDto subjectDto = new SubjectDto();
-                if (subject.getId() != null) {
-                    subjectDto.setId(subject.getId().toString());
-                }
-                if (subject.getTitle() != null) {
-                    subjectDto.setTitle(subject.getTitle());
-                }
-                subjectDtos.add(subjectDto);
-            }
-            positionDto.setSubjects(subjectDtos);
-        }
-        return positionDto;
+        return convertToDto(obj);
     }
 }

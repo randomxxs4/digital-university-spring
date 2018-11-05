@@ -12,6 +12,7 @@ import ru.digitaluniversity.entity.Student;
 import ru.digitaluniversity.entity.User;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.repository.UserRepository;
+import ru.digitaluniversity.security.dto.UserDto;
 
 @Service
 public class StudentConverter implements Converter<Student, StudentDto> {
@@ -21,7 +22,7 @@ public class StudentConverter implements Converter<Student, StudentDto> {
 
     @Autowired
     private Converter<Speciality, SpecialityDto> specialityConverter;
-
+    
     @Autowired
     private UserRepository userRepository;
 
@@ -34,10 +35,10 @@ public class StudentConverter implements Converter<Student, StudentDto> {
         if (obj.getUser() != null) {
             BasicInfoDto basicInfoDto = new BasicInfoDto();
             basicInfoDto.setId(obj.getUser().getId().toString());
-            basicInfoDto.setName(obj.getUser().getName());
-            basicInfoDto.setMiddlename(obj.getUser().getMiddlename());
             basicInfoDto.setSurname(obj.getUser().getSurname());
-        }
+            basicInfoDto.setMiddlename(obj.getUser().getMiddlename());
+            basicInfoDto.setName(obj.getUser().getName());
+            studentDto.setBasicInfo(basicInfoDto);}
         if (obj.getStudentGroup() != null) {
             studentDto.setStudentGroup(groupConverter.convertToDto(obj.getStudentGroup()));
         }

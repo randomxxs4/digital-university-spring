@@ -10,8 +10,10 @@ import ru.digitaluniversity.exception.TokenNotFoundException;
 import ru.digitaluniversity.exception.UnsupportedRoleException;
 import ru.digitaluniversity.repository.UserRepository;
 import ru.digitaluniversity.security.component.AuthenticationToken;
+import ru.digitaluniversity.security.dto.RoleDto;
 import ru.digitaluniversity.security.dto.TokenDto;
 import ru.digitaluniversity.security.dto.TokenRequestData;
+import ru.digitaluniversity.security.dto.UserDto;
 import ru.digitaluniversity.security.entity.Token;
 import ru.digitaluniversity.security.entity.UserRole;
 import ru.digitaluniversity.security.repository.RoleRepository;
@@ -20,6 +22,7 @@ import ru.digitaluniversity.security.repository.TokenRepository;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,10 +58,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                 AuthenticationToken authenticationToken = new AuthenticationToken(tokenString, user);
                 authProvider.authenticate(authenticationToken);
                 TokenDto tokenDto = new TokenDto();
-                tokenDto.setTokenString(tokenString);
+                tokenDto.setToken(tokenString);
                 tokenDto.setExpirationDate(expirationDate);
-                tokenDto.setUserId(user.getUsername());
-                tokenDto.setUserRole(getUserRole(user.getId()));
+                tokenDto.setUser(new UserDto(user.getId().toString(), user.getName(), user.getSurname(), user.getMiddlename(), user.getUsername()));
+                tokenDto.setRoles(getRoleDtos(user.getRoles()));
+                tokenDto.setAuthenticated(true);
                 return tokenDto;
             }
         }
@@ -114,7 +118,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                 return AuthorizationService.STUDENT_ROLE;
             }
         }
-        throw new UnsupportedRoleException();
+        return "";
     }
 
     @Override
@@ -149,5 +153,26 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         List<UserRole> userRoles = user.getRoles();
         Long count = userRoles.stream().filter((userRole -> userRole.getRole().equals(AuthorizationService.ADMIN_ROLE))).collect(Collectors.counting());
         return count > 0 ? true : false;
+    }
+
+    @Override
+    public TokenDto getAuthorizedInfo() {
+        User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
+        if (user != null) {
+            Token byUser = tokenRepository.findByUser(user.getId());
+            TokenDto tokenDto = new TokenDto();
+            tokenDto.setUser(new UserDto(user.getId().toString(), user.getName(), user.getSurname(), user.getMiddlename(), user.getUsername()));
+            tokenDto.setExpirationDate(byUser.getExperationDate().getTime());
+            tokenDto.setRoles(getRoleDtos(user.getRoles()));
+            tokenDto.setToken(byUser.getTokenString());
+            tokenDto.setAuthenticated(new Date().getTime() > byUser.getExperationDate().getTime());
+            return tokenDto;
+        } else {
+            return null;
+        }
+    }
+
+    private List<String> getRoleDtos(List<UserRole> roles) {
+        return roles.stream().map(role -> role.getRole()).collect(Collectors.toList());
     }
 }

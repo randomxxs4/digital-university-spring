@@ -8,9 +8,15 @@ import ru.digitaluniversity.entity.Group;
 import ru.digitaluniversity.entity.Teacher;
 import ru.digitaluniversity.entity.Timetable;
 
+import java.util.List;
+
 @Repository
 public interface TimetableRepository extends JpaRepository<Timetable, Integer> {
     Page<Timetable> findByTimetableGroup(Group group, Pageable pageable);
 
+    List<Timetable> findByTimetableGroup(Group group);
+
     Page<Timetable> findByTimetableTeacher(Teacher teacher, Pageable pageable);
+
+    List<Timetable> findByTimetableTeacher(Teacher teacher);
 }

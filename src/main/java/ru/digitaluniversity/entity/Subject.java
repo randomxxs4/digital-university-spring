@@ -15,13 +15,8 @@ public class Subject {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String title;
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
-            mappedBy = "subjects")
-    private List<Position> positions;
+    @ManyToOne
+    private Position position;
 
     public Subject() {
     }
@@ -42,11 +37,11 @@ public class Subject {
         this.title = title;
     }
 
-    public List<Position> getPositions() {
-        return positions;
+    public Position getPosition() {
+        return position;
     }
 
-    public void setPositions(List<Position> positions) {
-        this.positions = positions;
+    public void setPosition(Position position) {
+        this.position = position;
     }
 }

@@ -63,4 +63,14 @@ public class SpecialityServiceImpl implements SpecialityService {
     public SpecialityDto create(SpecialityDto obj) {
         return converter.convertToDto(specialityRepository.save(converter.convertToEntity(obj)));
     }
+
+    @Override
+    public List<SpecialityDto> findAll() {
+        List<Speciality> all = specialityRepository.findAll();
+        List<SpecialityDto> result = all.stream()
+                .map(speciality ->
+                        converter.convertToDto(speciality))
+                .collect(Collectors.toList());
+        return result;
+    }
 }

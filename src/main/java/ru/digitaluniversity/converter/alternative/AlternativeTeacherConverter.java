@@ -26,10 +26,7 @@ public class AlternativeTeacherConverter implements Converter<Teacher, Alternati
         alternativeTeacherDto.setMiddlename(obj.getUser().getMiddlename());
         alternativeTeacherDto.setSurname(obj.getUser().getSurname());
 
-        List<Position> positions = obj.getPositions();
-        List<PositionDto> positionDtos = positions.stream().map((position -> positionConverter.convertToDto(position))).collect(Collectors.toList());
-
-        alternativeTeacherDto.setPositions(positionDtos);
+        alternativeTeacherDto.setPosition(positionConverter.convertToDto(obj.getPosition()));
         return alternativeTeacherDto;
 
     }

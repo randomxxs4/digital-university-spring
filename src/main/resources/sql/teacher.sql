@@ -1,2 +1,2 @@
-INSERT INTO teachers (id, position, user_id) VALUES
-  (1, 1, 1);
+INSERT INTO teachers (id, user_id, position_id) VALUES
+  (1, 1);

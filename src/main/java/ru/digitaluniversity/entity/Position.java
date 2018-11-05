@@ -15,25 +15,10 @@ public class Position {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String title;
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    @JoinTable(name = "position_subject",
-            joinColumns = { @JoinColumn(name = "position_id") },
-            inverseJoinColumns = { @JoinColumn(name = "subject_id") })
-    private List<Subject> subjects;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    @JoinTable(name = "position_teacher",
-            joinColumns = { @JoinColumn(name = "position_id") },
-            inverseJoinColumns = { @JoinColumn(name = "teacher_id") })
-    private List<Teacher> teachers;
+    @OneToMany
+    @JoinColumn(name = "position_id", referencedColumnName = "id")
+    private List<Subject> subjects;
 
     public Position() {
     }
@@ -62,11 +47,4 @@ public class Position {
         this.subjects = subjects;
     }
 
-    public List<Teacher> getTeachers() {
-        return teachers;
-    }
-
-    public void setTeachers(List<Teacher> teachers) {
-        this.teachers = teachers;
-    }
 }

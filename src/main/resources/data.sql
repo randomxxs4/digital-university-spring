@@ -19,7 +19,8 @@ INSERT INTO pairs (id, number) VALUES
   (4, 4),
   (5, 5),
   (6, 6),
-  (7, 7);
+  (7, 7),
+  (8,8);
 -- INSERT INTO pairs (id, number) VALUES (8, 8);
 -- --
 INSERT INTO positions (id, title) VALUES
@@ -46,15 +47,10 @@ INSERT INTO specialities (id, title) VALUES
   (2, 'Физик'),
   (3, 'Философ');
 -- --
-INSERT INTO subjects (id, title) VALUES
-  (1, 'Высшая математика'),
-  (2, 'Физика'),
-  (3, 'Философия');
--- --
-INSERT INTO position_subject (position_id, subject_id) VALUES
-  (1, 1),
-  (2, 2),
-  (3, 3);
+INSERT INTO subjects (id, title, position_id) VALUES
+  (1, 'Высшая математика', 1),
+  (2, 'Физика',2),
+  (3, 'Философия',3);
 -- --
 INSERT INTO users (id, middlename, name, password, surname, username) VALUES
   (1, 'Иванович', 'Иван', '123', 'Иванов', 'teacher'),
@@ -72,7 +68,7 @@ INSERT INTO users_roles (users_id, roles_id) VALUES
   (5, 1),
   (6, 3);
 -- --
-INSERT INTO teachers (id, position, user_id) VALUES
+INSERT INTO teachers (id, user_id, position_id) VALUES
   (1, 1, 1);
 -- --
 INSERT INTO students (id, student_group_id, student_speciality_id, user_id) VALUES

@@ -62,4 +62,11 @@ public class RatingServiceImpl implements RatingService {
     public RatingDto create(RatingDto obj) {
         throw new NotImplementedMethodException();
     }
+
+    @Override
+    public List<RatingDto> findAllDay() {
+        return ratingRepostitory.findAll().stream()
+                .map(item -> converter.convertToDto(item))
+                .collect(Collectors.toList());
+    }
 }

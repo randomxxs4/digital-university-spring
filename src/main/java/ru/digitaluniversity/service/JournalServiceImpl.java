@@ -16,6 +16,7 @@ import ru.digitaluniversity.security.component.AuthenticationToken;
 import ru.digitaluniversity.security.service.AuthorizationService;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,23 +50,48 @@ public class JournalServiceImpl implements JournalService {
 
     @Override
     public Page<JournalDto> findByRole(Optional<Integer> page, Optional<Integer> size) throws Exception {
-        PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
+        return null;
+//        PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
+//        User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
+//        if (user != null) {
+//            String userRole = authorizationService.getUserRole(user.getId());
+//            if (AuthorizationService.STUDENT_ROLE.equals(userRole)) {
+//                Student student = studentRepository.findByUser(user);
+//                if (student != null) {
+//                    Page<Journal> journalPage = journalRepository.findByJournalStudent(student, pageRequest);
+//                    List<JournalDto> journalDtoList = getStreamConvert(journalPage);
+//                    Page<JournalDto> result = new PageImpl<>(journalDtoList, pageRequest, journalPage.getTotalElements());
+//                    return result;
+//                }
+//            }
+//            if (AuthorizationService.TEACHER_ROLE.equals(userRole)) {
+//                Teacher teacher = teacherRepository.findByUser(user);
+//                if (teacher != null) {
+//                    return findByTeacher(teacher, pageRequest);
+//                }
+//            }
+//        }
+//        throw new NotLogInException();
+    }
+
+    @Override
+    public List<JournalDto> findByRole() {
         User user = ((AuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUser();
         if (user != null) {
-            String userRole = authorizationService.getUserRole(user.getId());
-            if (AuthorizationService.STUDENT_ROLE.equals(userRole)) {
+            if (authorizationService.isStudent()) {
                 Student student = studentRepository.findByUser(user);
                 if (student != null) {
-                    Page<Journal> journalPage = journalRepository.findByJournalStudent(student, pageRequest);
+                    List<Journal> journalPage = journalRepository.findByJournalStudent(student)
+                            .stream().sorted(Comparator.comparingLong(o -> o.getJournalDate().getTime()))
+                            .collect(Collectors.toList());
                     List<JournalDto> journalDtoList = getStreamConvert(journalPage);
-                    Page<JournalDto> result = new PageImpl<>(journalDtoList, pageRequest, journalPage.getTotalElements());
-                    return result;
+                    return journalDtoList;
                 }
             }
-            if (AuthorizationService.TEACHER_ROLE.equals(userRole)) {
+            if (authorizationService.isTeacher()) {
                 Teacher teacher = teacherRepository.findByUser(user);
                 if (teacher != null) {
-                    return findByTeacher(teacher, pageRequest);
+                    return findByTeacher(teacher);
                 }
             }
         }
@@ -106,6 +132,12 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
+    public List<JournalDto> findAll() {
+        return journalRepository.findAll().stream().map(item ->
+                converter.convertToDto(item)).collect(Collectors.toList());
+    }
+
+    @Override
     public Page<JournalDto> findAll(Optional<Integer> page, Optional<Integer> size) {
         PageRequest pageRequest = PageRequest.of(page.orElse(DEFAULT_PAGE_NUMBER), size.orElse(DEFAULT_PAGE_SIZE));
         Page<Journal> allPages = journalRepository.findAll(pageRequest);
@@ -137,19 +169,8 @@ public class JournalServiceImpl implements JournalService {
                 }).collect(Collectors.toList());
     }
 
-    public Page<JournalDto> findByTeacher(Teacher teacher, Pageable pageable) {
-        Page<Timetable> byTimetableTeacher = timetableRepository.findByTimetableTeacher(teacher, pageable);
-        List<Timetable> content = byTimetableTeacher.getContent();
-        List<JournalDto> journalDtoList = new ArrayList<>();
-        for (int i = 0; i < content.size(); i++) {
-            List<Journal> timetableJournals = content.get(i).getTimetableJournal();
-            journalDtoList.addAll(getJournalDtos(timetableJournals));
-        }
-        return new PageImpl<>(journalDtoList, pageable, byTimetableTeacher.getTotalElements());
-    }
-
-    private List<JournalDto> getJournalDtos(List<Journal> journalList) {
-        return journalList.stream()
+    private List<JournalDto> getStreamConvert(List<Journal> journalPage) {
+        return journalPage.stream()
                 .map(journal -> {
                     try {
                         return converter.convertToDto(journal);
@@ -158,6 +179,20 @@ public class JournalServiceImpl implements JournalService {
                         throw new StreamConvertException("Could not convert Journal to Dto");
                     }
                 }).collect(Collectors.toList());
+    }
+
+
+    public List<JournalDto> findByTeacher(Teacher teacher) {
+        List<Timetable> byTimetableTeacher = timetableRepository.findByTimetableTeacher(teacher);
+        List<Journal> journals = new ArrayList<>();
+        for (int i = 0; i < byTimetableTeacher.size(); i++) {
+            List<Journal> timetableJournals = byTimetableTeacher.get(i).getTimetableJournal();
+            journals.addAll(timetableJournals);
+        }
+        return journals.stream()
+                .sorted(Comparator.comparingLong(o -> o.getJournalDate().getTime()))
+                .map(item -> converter.convertToDto(item))
+                .collect(Collectors.toList());
     }
 
     @Override
