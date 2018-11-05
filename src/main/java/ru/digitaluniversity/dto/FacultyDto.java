@@ -28,4 +28,36 @@ public class FacultyDto {
         this.specialities = faculty.getSpecialities()
                 .stream().map(SpecialityDto::new).collect(Collectors.toList());
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<SpecialityDto> getSpecialities() {
+        return specialities;
+    }
+
+    public void setSpecialities(List<SpecialityDto> specialities) {
+        this.specialities = specialities;
+    }
 }

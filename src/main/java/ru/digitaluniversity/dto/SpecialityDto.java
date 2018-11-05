@@ -8,6 +8,7 @@ import ru.digitaluniversity.entity.Speciality;
 public class SpecialityDto {
     private String id;
     private String title;
+    private String description;
 
     public SpecialityDto() {
     }
@@ -15,6 +16,7 @@ public class SpecialityDto {
     public SpecialityDto(Speciality speciality) {
         this.id = speciality.getId().toString();
         this.title = speciality.getTitle();
+        this.description = speciality.getDescription();
     }
 
     public String getId() {
@@ -31,5 +33,13 @@ public class SpecialityDto {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
