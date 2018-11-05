@@ -11,7 +11,6 @@ import ru.digitaluniversity.entity.User;
 import ru.digitaluniversity.exception.ConvertException;
 import ru.digitaluniversity.exception.NotFoundException;
 import ru.digitaluniversity.exception.NotLogInException;
-import ru.digitaluniversity.repository.JournalRepository;
 import ru.digitaluniversity.repository.StudentRepository;
 import ru.digitaluniversity.repository.TeacherRepository;
 import ru.digitaluniversity.repository.TimetableRepository;
